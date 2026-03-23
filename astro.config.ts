@@ -16,6 +16,10 @@ import { remarkFallbackLang } from './config/plugins/remark-fallback-lang';
 const NETLIFY_PREVIEW_SITE = process.env.CONTEXT !== 'production' && process.env.DEPLOY_PRIME_URL;
 
 const site = NETLIFY_PREVIEW_SITE || 'https://docs.astro.build/';
+const starlightPlugins = [
+	starlightPluginSmokeTest(),
+	...(process.env.SKIP_LLMS ? [] : [starlightPluginLlmsTxt()]),
+];
 
 // https://astro.build/config
 export default defineConfig({
@@ -69,7 +73,7 @@ export default defineConfig({
 				},
 			],
 			disable404Route: true,
-			plugins: [starlightPluginSmokeTest(), starlightPluginLlmsTxt()],
+			plugins: starlightPlugins,
 		}),
 		sitemap(),
 	],
