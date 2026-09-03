@@ -108,7 +108,7 @@ Astroは、プロジェクト内のローカルファイル、リモートホス
 
 ## コレクションのTypeScript設定
 
-コンテンツコレクションは、エディターでZodによる検証、IntelliSense、型チェックを提供するためにTypeScriptを利用します。デフォルトでは、`create astro` CLIコマンドで新しいプロジェクトを作成すると、Astroは[`strict` TypeScriptテンプレート](/ja/guides/typescript/#tsconfigテンプレート)を設定します。Astroの`strict`と`strictest`テンプレートには、コンテンツコレクションに必要なTypeScript設定が含まれています。
+コンテンツコレクションは、エディターでZodによる検証、IntelliSense、型チェックを提供するためにTypeScriptを利用します。デフォルトでは、`create astro` CLIコマンドで新しいプロジェクトを作成すると、Astroは[`strict` TypeScriptテンプレート](/ja/guides/typescript/#tsconfigのテンプレート)を設定します。Astroの`strict`と`strictest`テンプレートには、コンテンツコレクションに必要なTypeScript設定が含まれています。
 
 プロジェクトでTypeScriptを使用しないため設定を`base`に変更した場合や、Astroの組み込みテンプレートを使用していない場合は、コンテンツコレクションを使用するために`tsconfig.json`へ次の`compilerOptions`も追加する必要があります。
 
@@ -168,7 +168,7 @@ Astroは、ビルド時にローカルコンテンツを取得する2つの組�
 
 ### `glob()`ローダー
 
-[`glob()`ローダー](/ja/reference/content-loader-reference/#globローダー)は、ファイルシステム上の任意の場所にあるMarkdown、MDX、Markdoc、JSON、YAML、TOMLファイルのディレクトリからエントリーを取得します。ブログ記事のディレクトリのように、コンテンツエントリーを個別のローカルファイルとして保存している場合は、`glob()`ローダーだけでコンテンツへアクセスできます。
+[`glob()`ローダー](/ja/reference/content-loader-reference/#glob-loader)は、ファイルシステム上の任意の場所にあるMarkdown、MDX、Markdoc、JSON、YAML、TOMLファイルのディレクトリからエントリーを取得します。ブログ記事のディレクトリのように、コンテンツエントリーを個別のローカルファイルとして保存している場合は、`glob()`ローダーだけでコンテンツへアクセスできます。
 
 このローダーには、[micromatch](https://github.com/micromatch/micromatch#matching-features)がサポートするglobパターンで照合するエントリーファイルの`pattern`と、ファイルの保存場所を示す`base`ファイルパスが必要です。各エントリーの一意な`id`はファイル名から自動的に生成されますが、必要に応じて[独自のIDを定義](#独自のidの定義)できます。
 
@@ -224,7 +224,7 @@ const authors = defineCollection({
 
 ### `file()`ローダー
 
-[`file()`ローダー](/ja/reference/content-loader-reference/#fileローダー)は、コレクションで定義された単一のローカルファイルから複数のエントリーを取得します。`file()`ローダーは、JSONとYAMLファイルではオブジェクトの単一配列をファイル拡張子に基づいて自動的に検出・解析し、TOMLファイルでは最上位の各テーブルを個別のエントリーとして扱います。
+[`file()`ローダー](/ja/reference/content-loader-reference/#file-loader)は、コレクションで定義された単一のローカルファイルから複数のエントリーを取得します。`file()`ローダーは、JSONとYAMLファイルではオブジェクトの単一配列をファイル拡張子に基づいて自動的に検出・解析し、TOMLファイルでは最上位の各テーブルを個別のエントリーとして扱います。
 
 ```ts  title="src/content.config.ts" {5}
 import { defineCollection } from "astro:content";
@@ -299,7 +299,7 @@ const cats = defineCollection({
 
 ### 独自のビルド時ローダー
 
-コンテンツローダーAPIを使用して[独自のローダーを構築](/ja/reference/content-loader-reference/#ローダーの構築)し、CMS、データベース、APIエンドポイントなど、任意のデータソースからリモートコンテンツを取得できます。
+コンテンツローダーAPIを使用して[独自のローダーを構築](/ja/reference/content-loader-reference/#building-a-loader)し、CMS、データベース、APIエンドポイントなど、任意のデータソースからリモートコンテンツを取得できます。
 
 その後、コレクション設定で独自のローダーをインポートして定義し、必要な値を渡します。
 
@@ -335,7 +335,7 @@ AstroインテグレーションやViteプラグインの作成と同様に、�
 Astroが新しいスキーマや更新されたスキーマを認識するには、開発サーバーを再起動するか、[コンテンツレイヤーを同期](/ja/reference/cli-reference/#astro-dev)（<code>s + enter</code>）して`astro:content`モジュールを定義する必要がある場合があります。
 :::
 
-`schema`の指定は任意ですが、強く推奨します。スキーマを使用する場合、コレクションエントリーのすべてのフロントマターまたはデータプロパティを[Zodデータ型](/ja/reference/modules/astro-zod/#一般的なデータ型バリデーター)で定義する必要があります。
+`schema`の指定は任意ですが、強く推奨します。スキーマを使用する場合、コレクションエントリーのすべてのフロントマターまたはデータプロパティを[Zodデータ型](/ja/reference/modules/astro-zod/#common-data-type-validators)で定義する必要があります。
 
 ```ts title="src/content.config.ts" {7-12,16-20}
 import { defineCollection } from "astro:content";
@@ -373,7 +373,7 @@ AstroでZodを使用するには、`"astro/zod"`から`z`ユーティリティ�
 
 #### Zodスキーマメソッド
 
-一部の制限はありますが、すべての[Zodスキーマメソッド](/ja/reference/modules/astro-zod/#zodメソッドの使用)（`.parse()`、`.transform()`など）を利用できます。特に、`image().refine()`を使用した画像の独自検証には対応していません。
+一部の制限はありますが、すべての[Zodスキーマメソッド](/ja/reference/modules/astro-zod/#using-zod-methods)（`.parse()`、`.transform()`など）を利用できます。特に、`image().refine()`を使用した画像の独自検証には対応していません。
 
 ### コレクション参照の定義
 
@@ -503,7 +503,7 @@ const { Content } = await render(entry);
 <Content />
 ```
 
-<ReadMore>MDXエントリーを扱う場合は、[独自のコンポーネントを`<Content />`へ渡し](/ja/guides/integrations-guide/mdx/#mdxコンテンツにコンポーネントを渡す)、HTML要素を独自の要素に置き換えることもできます。</ReadMore>
+<ReadMore>MDXエントリーを扱う場合は、[独自のコンポーネントを`<Content />`へ渡し](/ja/guides/integrations-guide/mdx/#componentsをmdxコンテンツに渡す)、HTML要素を独自の要素に置き換えることもできます。</ReadMore>
 
 #### コンテンツをプロパティとして渡す
 
@@ -604,7 +604,7 @@ const relatedPosts = await getEntries(blogPost.data.relatedPosts);
 
 コンテンツコレクションは`src/pages/`ディレクトリの外に保存されます。そのため、Astroの[ファイルベースルーティング](/ja/guides/routing/)では、デフォルトでコレクションの項目に対応するページやルートは生成されません。
 
-個別のブログ記事など、コレクションの各エントリーについてHTMLページを生成するには、新しい[動的ルート](/ja/guides/routing/#動的ルーティング)を手動で作成する必要があります。動的ルートは、受信したリクエストパラメーター（たとえば`src/pages/blog/[...id].astro`内の`Astro.params.id`）を対応付けて、各ページの正しいエントリーを取得します。
+個別のブログ記事など、コレクションの各エントリーについてHTMLページを生成するには、新しい[動的ルート](/ja/guides/routing/#dynamic-routes)を手動で作成する必要があります。動的ルートは、受信したリクエストパラメーター（たとえば`src/pages/blog/[...id].astro`内の`Astro.params.id`）を対応付けて、各ページの正しいエントリーを取得します。
 
 ルートを生成する具体的な方法は、ページを事前レンダリングするか（デフォルト）、サーバーでオンデマンドレンダリングするかによって異なります。
 
@@ -636,7 +636,7 @@ const { Content } = await render(post);
 これにより、`blog`コレクションの各エントリーにページルートが生成されます。たとえば、`src/blog/hello-world.md`にあるエントリーの`id`は`hello-world`になるため、最終的なURLは`/posts/hello-world/`になります。
 
 :::note
-独自のスラッグに`/`文字を含めて複数のパスセグメントを持つURLを生成する場合、この動的ルーティングページの`.astro`ファイル名では[レストパラメーター（`[...id]`など）](/ja/guides/routing/#レストパラメーター)を使用する必要があります。
+独自のスラッグに`/`文字を含めて複数のパスセグメントを持つURLを生成する場合、この動的ルーティングページの`.astro`ファイル名では[レストパラメーター（`[...id]`など）](/ja/guides/routing/#rest-parameters)を使用する必要があります。
 :::
 
 ### リクエスト時にオンデマンドでルートを構築
@@ -701,7 +701,7 @@ const { Content } = await render(post);
 
 ビルド時コレクションとは異なり、組み込みのライブローダーはありません。使用するデータソース向けに[独自のライブローダーを作成](#ライブローダーの作成)するか、ライブコレクションの`loader`プロパティへ渡すサードパーティ製ローダーを探す必要があります。
 
-必要に応じて、[ライブローダー自体に型安全性を含める](/ja/reference/content-loader-reference/#liveloaderオブジェクト)ことができます。そのため、ライブコレクションに[Zodの`schema`を定義する](#ライブコレクションでのzodスキーマの使用)かどうかは任意です。ただし、スキーマを指定した場合は、ライブローダーの型よりも優先されます。
+必要に応じて、[ライブローダー自体に型安全性を含める](/ja/reference/content-loader-reference/#the-liveloader-object)ことができます。そのため、ライブコレクションに[Zodの`schema`を定義する](#ライブコレクションでのzodスキーマの使用)かどうかは任意です。ただし、スキーマを指定した場合は、ライブローダーの型よりも優先されます。
 
 ```ts title="src/live.config.ts"
 // リアルタイムデータにアクセスするライブコレクションを定義
@@ -725,7 +725,7 @@ export const collections = { products };
 
 ### ライブローダーの作成
 
-ライブローダーAPIを使用して独自の[ライブローダー](/ja/reference/content-loader-reference/#ライブローダー)を構築し、CMS、データベース、APIエンドポイントなど任意のデータソースから、リクエスト時に最新のリモートコンテンツを取得できます。ライブローダーには、対象のデータソースからコンテンツエントリーを取得して返す方法と、データリクエストに失敗した場合のエラー処理を指定する必要があります。
+ライブローダーAPIを使用して独自の[ライブローダー](/ja/reference/content-loader-reference/#live-loaders)を構築し、CMS、データベース、APIエンドポイントなど任意のデータソースから、リクエスト時に最新のリモートコンテンツを取得できます。ライブローダーには、対象のデータソースからコンテンツエントリーを取得して返す方法と、データリクエストに失敗した場合のエラー処理を指定する必要があります。
 
 ライブローダーでデータを取得すると、リモートデータからコレクションが自動的に作成されます。これにより、データを[クエリして表示](#ビルド時コレクションのクエリ)する`getLiveCollection()`や`render()`などのコレクション固有のAPIヘルパーや、便利なエラー処理を含む、Astroのコンテンツコレクションのすべての利点が得られます。
 
@@ -733,13 +733,13 @@ export const collections = { products };
 [Astroインテグレーションディレクトリ](https://astro.build/integrations/?search=&categories%5B%5D=loaders)で、コミュニティ製およびサードパーティ製のライブローダーを探せます。
 :::
 
-<ReadMore>ライブローダーAPIを使用した[ライブローダーの構築](/ja/reference/content-loader-reference/#ライブローダーの構築)の基本を参照してください。</ReadMore>
+<ReadMore>ライブローダーAPIを使用した[ライブローダーの構築](/ja/reference/content-loader-reference/#building-a-live-loader)の基本を参照してください。</ReadMore>
 
 ### ライブコレクションでのZodスキーマの使用
 
 ライブコレクションでZodスキーマを使用すると、実行時にデータを検証して変換できます。このZod検証は、[ビルド時コレクションのスキーマ](#コレクションスキーマの定義)と同じように動作します。
 
-ライブコレクションにスキーマを定義すると、コレクションをクエリする際に[ライブローダーの型](/ja/reference/content-loader-reference/#liveloaderオブジェクト)よりも優先されます。
+ライブコレクションにスキーマを定義すると、コレクションをクエリする際に[ライブローダーの型](/ja/reference/content-loader-reference/#the-liveloader-object)よりも優先されます。
 
 ```ts title="src/live.config.ts"
 import { defineLiveCollection } from 'astro:content';
@@ -829,7 +829,7 @@ const { entry: product } = await getLiveEntry("products", Astro.params.slug);
 
 ライブローダーが[`rendered`プロパティを返す](/ja/reference/content-loader-reference/#livedataentryrendered)場合は、ビルド時コレクションと同じ方法で[`render()`関数と`<Content />`コンポーネント](#本文コンテンツのレンダリング)を使用し、ページ内にコンテンツを直接レンダリングできます。
 
-[ライブローダーが返すエラー](/ja/reference/content-loader-reference/#ライブローダーのエラー処理)にもアクセスできます。たとえば、コンテンツを表示できない場合に404ページへリライトできます。
+[ライブローダーが返すエラー](/ja/reference/content-loader-reference/#error-handling-in-live-loaders)にもアクセスできます。たとえば、コンテンツを表示できない場合に404ページへリライトできます。
 
 ```astro title="src/pages/store/[id].astro" "render(entry)" "<Content />"
 ---
@@ -895,7 +895,7 @@ if (error) {
 
 <p><Since v="7.0.0" /></p>
 
-ライブローダーが[キャッシュヒント](/ja/reference/content-loader-reference/#ライブローダー)を提供する場合、`getLiveEntry()`と`getLiveCollection()`は`cacheHint`オブジェクトを返します。これにより、ヘッダーを手動で設定せずに、ルートの[キャッシュ動作](/ja/guides/caching/)を制御できます。
+ライブローダーが[キャッシュヒント](/ja/reference/content-loader-reference/#cache-hints)を提供する場合、`getLiveEntry()`と`getLiveCollection()`は`cacheHint`オブジェクトを返します。これにより、ヘッダーを手動で設定せずに、ルートの[キャッシュ動作](/ja/guides/caching/)を制御できます。
 
 キャッシュヒントには、対象を指定した無効化に使用する[`tags`](/ja/reference/content-loader-reference/#cachehinttags)と、キャッシュされたデータを最新に保つ[`lastModified`](/ja/reference/content-loader-reference/#cachehintlastmodified)が含まれます。キャッシュヒントを独自の[キャッシュオプション](/ja/reference/cache-provider-reference/#cacheoptions)と組み合わせて、キャッシュ動作をさらにカスタマイズすることもできます。
 
