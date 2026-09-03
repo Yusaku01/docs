@@ -630,9 +630,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 });
 ```
 
-HTMLフォームの結果を永続化するための一般的な手法は、 [POST / Redirect / GET パターン](https://en.wikipedia.org/wiki/Post/Redirect/Get) です。このリダイレクトにより、ページ更新時の「フォーム再送信の確認」ダイアログがなくなり、アクションの結果をユーザーセッション全体で永続化できるようになります。
+HTMLフォームの結果を永続化するための一般的な手法は、[POST/Redirect/GETパターン](https://en.wikipedia.org/wiki/Post/Redirect/Get)です。このリダイレクトにより、ページ更新時の「フォーム再送信の確認」ダイアログがなくなり、アクションの結果をユーザーセッション全体で永続化できるようになります。
 
-この例では、[Netlify サーバーアダプター](/ja/guides/integrations-guide/netlify/) がインストールされている状態で、Netlify Blobを使用したセッションストレージを利用して、すべてのフォーム送信にPOST / Redirect / GETパターンを適用しています。アクションの結果はセッションストアに書き込まれ、リダイレクト後にセッションIDを使用して取得されます：
+この例では、[Netlifyサーバーアダプター](/ja/guides/integrations-guide/netlify/)がインストールされている状態で、Netlify Blobを使用したセッションストレージを利用して、すべてのフォーム送信にPOST/Redirect/GETパターンを適用しています。アクションの結果はセッションストアに書き込まれ、リダイレクト後にセッションIDを使用して取得されます：
 
 ```ts title="src/middleware.ts"
 import { defineMiddleware } from 'astro:middleware';
