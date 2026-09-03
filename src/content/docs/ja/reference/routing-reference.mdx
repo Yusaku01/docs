@@ -1,0 +1,375 @@
+---
+title: ルーティングリファレンス
+i18nReady: true
+tableOfContents:
+  minHeadingLevel: 2
+  maxHeadingLevel: 4
+---
+import Since from '~/components/Since.astro';
+import PackageManagerTabs from '~/components/tabs/PackageManagerTabs.astro';
+import ReadMore from '~/components/ReadMore.astro';
+
+Astroには、独立したルーティング設定はありません。
+
+特別な`src/pages/`ディレクトリに配置された、[サポートされている各ページファイル](/ja/basics/astro-pages/#サポートされているページファイル)によってルートが作成されます。ファイル名に[パラメーター](#params)が含まれている場合、1つのルートから複数のページを動的に作成できます。それ以外の場合は、1つのページが作成されます。
+
+デフォルトでは、Astroのすべてのページルートとエンドポイントはビルド時に生成され、事前レンダリングされます。[オンデマンドサーバーレンダリング](/ja/guides/on-demand-rendering/)は、個別のルートに設定することも、デフォルトにすることもできます。
+
+## `prerender`
+
+<p>
+
+**型:** `boolean`<br />
+**デフォルト:** 静的モード（デフォルト）では`true`、`output: 'server'`の設定では`false`<br />
+<Since v="1.0.0" />
+</p>
+
+個別のルートからエクスポートし、そのルートを事前レンダリングするかどうかを決める値です。
+
+デフォルトでは、すべてのページとエンドポイントが事前レンダリングされ、ビルド時に静的に生成されます。1つ以上のルートで事前レンダリングを無効にし、同じプロジェクト内で静的ルートとオンデマンドレンダリングのルートを併用できます。
+
+### ページごとの上書き
+
+個別のルートで[オンデマンドレンダリング](/ja/guides/on-demand-rendering/)を有効にするには、そのファイルから値が`false`の`prerender`をエクスポートして、デフォルト値を上書きします。
+
+```astro title="src/pages/rendered-on-demand.astro" {2}
+---
+export const prerender = false
+---
+<!-- サーバーでレンダリングされるコンテンツ -->
+<!-- サイトの残りの部分は静的 -->
+```
+
+### `server`モードへの切り替え
+
+[`output: 'server'`](/ja/reference/configuration-reference/#output)を設定すると、すべてのルートのデフォルト値を上書きできます。この出力モードでは、すべてのページとエンドポイントは事前レンダリングされず、デフォルトでリクエスト時にサーバー上で生成されます。
+
+`server`モードで個別のルートの事前レンダリングを有効にするには、そのファイルから値が`true`の`prerender`をエクスポートします。
+
+```astro title="src/pages/static-about-page.astro" {3}
+---
+// `output: 'server'`が設定されている場合
+export const prerender = true
+---
+<!-- 静的なAboutページ -->
+<!-- その他のすべてのページはオンデマンドでレンダリングされる -->
+```
+
+## `partial`
+
+<p>
+
+**型:** `boolean` <br />
+**デフォルト:** `false` <br />
+<Since v="3.4.0" />
+</p>
+
+個別のルートからエクスポートし、そのルートを完全なHTMLページとしてレンダリングするかどうかを決める値です。
+
+デフォルトでは、予約済みの`src/pages/`ディレクトリに配置されたすべてのファイルに、`<!DOCTYPE html>`宣言と、Astroのスコープ付きスタイルやスクリプトなどの追加の`<head>`コンテンツが自動的に含まれます。
+
+個別のルートのコンテンツを[ページパーシャル](/ja/basics/astro-pages/#ページパーシャル)として指定するには、そのファイルから`partial`の値をエクスポートしてデフォルト値を上書きします。
+
+```astro title="src/pages/my-page-partial.astro" {2}
+---
+export const partial = true
+---
+<!-- 生成されたHTMLはURLで利用できる -->
+<!-- レンダリングライブラリから利用できる -->
+```
+
+`export const partial`は静的に識別できる必要があります。次の値を指定できます。
+
+- 真偽値の__`true`__。
+- `import.meta.env.USE_PARTIALS`のように、`import.meta.env`を使用する環境変数。
+
+## `getStaticPaths()`
+
+<p>
+**型:** `(options: GetStaticPathsOptions) => Promise<GetStaticPathsResult> | GetStaticPathsResult` <br />
+<Since v="1.0.0" />
+</p>
+
+ファイルパスに1つ以上の[パラメーター](#params)を含む単一の`.astro`ページコンポーネントから、事前レンダリングされた複数のページルートを生成する関数です。静的サイトビルドとも呼ばれる、ビルド時に作成するルートに使用します。
+
+`getStaticPaths()`関数は、Astroが事前レンダリングするURLパスを決めるオブジェクトの配列を返す必要があります。各オブジェクトには、ルートパスを指定する`params`オブジェクトが必要です。必要に応じて、各ページテンプレートに[渡すデータ](#propsによるデータの受け渡し)を含む`props`オブジェクトも指定できます。
+
+```astro title="src/pages/blog/[post].astro" "post"
+---
+// 'server'モードで事前レンダリングを有効にする場合：
+// export const prerender = true
+
+export async function getStaticPaths() {
+  return [
+    // { params: { /* 必須 */ }, props: { /* 任意 */ } },
+    { params: { post: '1' } }, // [post]はパラメーター
+    { params: { post: '2' } }, // ファイル名と一致する必要がある
+    // ...
+  ];
+}
+---
+<!-- ここにHTMLテンプレートを記述します。 -->
+```
+
+`getStaticPaths()`は、静的ファイルエンドポイントの[動的ルーティング](/ja/guides/endpoints/#paramsと動的ルーティング)にも使用できます。
+
+:::tip
+TypeScriptを使用する場合は、型ユーティリティ[`GetStaticPaths`](/ja/guides/typescript/#getstaticpathsの型推論)を使用して、`params`と`props`へ型安全にアクセスできるようにします。
+:::
+
+:::caution
+`getStaticPaths()`関数は、ページが読み込まれる前に、独立したスコープで一度だけ実行されます。そのため、ファイルのインポートを除き、親スコープの値を参照できません。この要件に違反すると、コンパイラーにより警告が表示されます。
+:::
+
+### `params`
+
+`getStaticPaths()`が返す配列内の各オブジェクトの`params`キーは、ビルドするルートをAstroに伝えます。
+
+`params`のキーは、コンポーネントのファイルパスで定義されたパラメーターと一致する必要があります。各`params`オブジェクトの値も、ページ名で使用されているパラメーターと一致する必要があります。`params`はURLにエンコードされるため、値としてサポートされるのは文字列のみです。
+
+たとえば、`src/pages/posts/[id].astro`のファイル名には`id`パラメーターがあります。この`.astro`コンポーネント内の次の`getStaticPaths()`関数は、ビルド時に`posts/1`、`posts/2`、`posts/3`を静的に生成するようAstroに指示します。
+
+```astro title="src/pages/posts/[id].astro"
+---
+export async function getStaticPaths() {
+  return [
+    { params: { id: '1' } },
+    { params: { id: '2' } },
+    { params: { id: '3' } }
+  ];
+}
+
+const { id } = Astro.params;
+---
+<h1>{id}</h1>
+```
+
+### `props`によるデータの受け渡し
+
+生成された各ページに追加のデータを渡すには、`getStaticPaths()`が返す配列内の各オブジェクトに`props`の値を設定します。`params`とは異なり、`props`はURLにエンコードされないため、文字列だけに制限されません。
+
+たとえば、リモートAPIから取得したデータを使用してページを生成する場合、`getStaticPaths()`内でデータオブジェクト全体をページコンポーネントに渡せます。ページテンプレートでは、`Astro.props`を使用して各投稿のデータを参照できます。
+
+```astro title="src/pages/posts/[id].astro" {9}
+---
+export async function getStaticPaths() {
+  const response = await fetch("...");
+  const data: any[] = await response.json();
+
+  return data.map((post) => {
+    return {
+      params: { id: post.id },
+      props: { post },
+    };
+  });
+}
+
+const { id } = Astro.params;
+const { post } = Astro.props;
+---
+
+<h1>{id}: {post.name}</h1>
+```
+
+### `routePattern`
+
+<p>
+
+**型:** `string` <br />
+<Since v="5.14.0" />
+</p>
+
+[`getStaticPaths()`](#getstaticpaths)のオプションで利用でき、現在の[`routePattern`](/ja/reference/api-reference/#routepattern)に文字列としてアクセスするためのプロパティです。
+
+このプロパティは、通常は`getStaticPaths()`のスコープ内で利用できない[Astroレンダーコンテキスト](/ja/reference/api-reference/)のデータを提供します。各ページルートの`params`と`props`を計算する際に役立ちます。
+
+`params`がページの具体的な値（例：`/fr/fichiers/article-1/`）であるのに対し、`routePattern`は常にファイルパス内の元の動的セグメント定義（例：`/[...locale]/[files]/[slug]`）を反映します。
+
+次の例では、`routePattern`を独自の`getLocalizedData()`ヘルパー関数に渡して、ルートセグメントをローカライズし、静的パスの配列を返します。[`params`](#params)オブジェクトには、各ルートセグメント（`locale`、`files`、`slug`）の具体的な値が設定されます。これらの値はルートの生成に使用され、ページテンプレートから`Astro.params`を通して利用できます。
+
+
+```astro title="src/pages/[...locale]/[files]/[slug].astro" "routePattern" "getLocalizedData"
+---
+import type { GetStaticPathsOptions } from "astro";
+import { getLocalizedData } from "../../../utils/i18n";
+
+export async function getStaticPaths({ routePattern }: GetStaticPathsOptions) {
+  const response = await fetch("...");
+  const data: any[] = await response.json();
+
+  console.log(routePattern); // [...locale]/[files]/[slug]
+
+  // 独自のヘルパーに`routePattern`を渡して静的パスを生成する
+  return data.flatMap((file) => getLocalizedData(file, routePattern));
+}
+
+const { locale, files, slug } = Astro.params;
+---
+```
+
+### `paginate()`
+
+<p>
+
+<Since v="1.0.0" />
+</p>
+
+コンテンツ項目のコレクションを複数のページに分割するために、[`getStaticPaths()`](#getstaticpaths)から返せる関数です。
+
+`paginate()`は、ページ分けされたコレクションの各ページにURLを作成するため、`getStaticPaths()`から返す必要がある配列を自動的に生成します。ページ番号は`param`として、ページデータは`page`プロパティとして渡されます。
+
+次の例では、150件の項目を取得して`paginate`関数に渡し、1ページあたり10件を表示する静的な事前レンダリング済みページをビルド時に作成します。
+
+```astro title="src/pages/pokemon/[page].astro"
+---
+import type { GetStaticPathsOptions } from "astro";
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  // fetch()やgetCollection()などでデータを読み込む
+  const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=150`);
+  const result = await response.json();
+  const allPokemon = result.results;
+
+  // すべての項目についてページ分けされたパスのコレクションを返す
+  return paginate(allPokemon, {
+    pageSize: 10,
+    format: (url) => `${url}.html`,
+  });
+}
+
+const { page } = Astro.props;
+---
+```
+
+`paginate()`には、次の引数があります。
+- `data` - `paginate()`関数に渡すページデータを含む配列
+- `options` - 次のプロパティを持つ任意のオブジェクト
+  - `pageSize` - 1ページに表示する項目数（デフォルトは`10`）
+  - `params` - 動的ルートの作成に使用する追加のパラメーター
+  - `props` - 各ページで利用できる追加のプロパティ
+  - `format` - **v7.1.0で追加。** 計算されたURLをレンダリング前に加工できる関数
+
+`paginate()`は、ファイル名が`[page].astro`または`[...page].astro`であることを前提とします。`page`パラメーターはURL内のページ番号になります。
+
+- `/posts/[page].astro`は、`/posts/1`、`/posts/2`、`/posts/3`などのURLを生成します。
+- `/posts/[...page].astro`は、`/posts`、`/posts/2`、`/posts/3`などのURLを生成します。
+
+#### ページネーションの`page`プロパティ
+
+<p>
+
+**型:** `Page<TData>`
+</p>
+
+ページネーションは、ページ分けされたコレクションの1ページ分のデータを表す`page`プロパティを、レンダリングされる各ページに渡します。これには、ページ分けしたデータ（`page.data`）に加えて、ページのメタデータ（`page.url`、`page.start`、`page.end`、`page.total`など）が含まれます。このメタデータは、「次のページ」ボタンや「100件中1〜10件を表示」といったメッセージに役立ちます。
+
+##### `page.data`
+
+<p>
+
+**型:** `Array<TData>`
+</p>
+
+`paginate()`関数が現在のページについて返すデータの配列です。
+
+##### `page.start`
+
+<p>
+
+**型:** `number`
+</p>
+
+現在のページにある最初の項目の、`0`から始まるインデックスです（たとえば`pageSize: 25`の場合、1ページ目では`0`、2ページ目では`25`など）。
+
+##### `page.end`
+
+<p>
+
+**型:** `number`
+</p>
+
+現在のページにある最後の項目のインデックスです。
+
+##### `page.size`
+
+<p>
+
+**型:** `number`<br />
+**デフォルト:** `10`
+</p>
+
+1ページあたりの項目数です。
+
+##### `page.total`
+
+<p>
+
+**型:** `number`
+</p>
+
+すべてのページに含まれる項目の総数です。
+
+##### `page.currentPage`
+
+<p>
+
+**型:** `number`
+</p>
+
+`1`から始まる現在のページ番号です。
+
+##### `page.lastPage`
+
+<p>
+
+**型:** `number`
+</p>
+
+ページの総数です。
+
+##### `page.url.current`
+
+<p>
+
+**型:** `string`
+</p>
+
+現在のページのURLを取得します（正規URLに便利です）。[`base`](/ja/reference/configuration-reference/#base)に値が設定されている場合、URLはその値から始まります。
+
+##### `page.url.prev`
+
+<p>
+
+**型:** `string | undefined`
+</p>
+
+前のページのURLを取得します（1ページ目の場合は`undefined`）。[`base`](/ja/reference/configuration-reference/#base)に値が設定されている場合、URLの先頭にベースパスが追加されます。
+
+##### `page.url.next`
+
+<p>
+
+**型:** `string | undefined`
+</p>
+
+次のページのURLを取得します（次のページがない場合は`undefined`）。[`base`](/ja/reference/configuration-reference/#base)に値が設定されている場合、URLの先頭にベースパスが追加されます。
+
+##### `page.url.first`
+
+<p>
+
+**型:** `string | undefined`<br />
+<Since v="4.12.0" />
+</p>
+
+最初のページのURLを取得します（1ページ目の場合は`undefined`）。[`base`](/ja/reference/configuration-reference/#base)に値が設定されている場合、URLの先頭にベースパスが追加されます。
+
+##### `page.url.last`
+
+<p>
+
+**型:** `string | undefined`<br />
+<Since v="4.12.0" />
+</p>
+
+最後のページのURLを取得します（次のページがない場合は`undefined`）。[`base`](/ja/reference/configuration-reference/#base)に値が設定されている場合、URLの先頭にベースパスが追加されます。
