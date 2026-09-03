@@ -172,7 +172,7 @@ prefetch('/terms-of-service', { eagerness: 'moderate' });
 
 ## ビュートランジションとともに使用する
 
-ページで[Astroの`<ClientRouter />`](/ja/guides/view-transitions/#ビュートランジションspaモードを有効にする)を使用すると、プリフェッチもデフォルトで有効になります。`{ prefetchAll: true }`がデフォルトで設定され、ページ内の[すべてのリンクに対するプリフェッチ](#すべてのリンクをデフォルトでプリフェッチする)が有効になります。
+ページで[Astroの`<ClientRouter />`](/ja/guides/view-transitions/#enabling-view-transitions-spa-mode)を使用すると、プリフェッチもデフォルトで有効になります。`{ prefetchAll: true }`がデフォルトで設定され、ページ内の[すべてのリンクに対するプリフェッチ](#すべてのリンクをデフォルトでプリフェッチする)が有効になります。
 
 デフォルトを上書きするには、`astro.config.mjs`内のプリフェッチ設定をカスタマイズできます。たとえば、次のように設定します。
   
