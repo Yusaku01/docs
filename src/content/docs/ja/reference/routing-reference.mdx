@@ -11,7 +11,7 @@ import ReadMore from '~/components/ReadMore.astro';
 
 Astroには、独立したルーティング設定はありません。
 
-特別な`src/pages/`ディレクトリに配置された、[サポートされている各ページファイル](/ja/basics/astro-pages/#サポートされているページファイル)によってルートが作成されます。ファイル名に[パラメーター](#params)が含まれている場合、1つのルートから複数のページを動的に作成できます。それ以外の場合は、1つのページが作成されます。
+特別な`src/pages/`ディレクトリに配置された、[サポートされている各ページファイル](/ja/basics/astro-pages/#サポートしているページファイル)によってルートが作成されます。ファイル名に[パラメーター](#params)が含まれている場合、1つのルートから複数のページを動的に作成できます。それ以外の場合は、1つのページが作成されます。
 
 デフォルトでは、Astroのすべてのページルートとエンドポイントはビルド時に生成され、事前レンダリングされます。[オンデマンドサーバーレンダリング](/ja/guides/on-demand-rendering/)は、個別のルートに設定することも、デフォルトにすることもできます。
 
@@ -68,7 +68,7 @@ export const prerender = true
 
 デフォルトでは、予約済みの`src/pages/`ディレクトリに配置されたすべてのファイルに、`<!DOCTYPE html>`宣言と、Astroのスコープ付きスタイルやスクリプトなどの追加の`<head>`コンテンツが自動的に含まれます。
 
-個別のルートのコンテンツを[ページパーシャル](/ja/basics/astro-pages/#ページパーシャル)として指定するには、そのファイルから`partial`の値をエクスポートしてデフォルト値を上書きします。
+個別のルートのコンテンツを[ページパーシャル](/ja/basics/astro-pages/#パーシャルページ)として指定するには、そのファイルから`partial`の値をエクスポートしてデフォルト値を上書きします。
 
 ```astro title="src/pages/my-page-partial.astro" {2}
 ---
@@ -114,7 +114,7 @@ export async function getStaticPaths() {
 `getStaticPaths()`は、静的ファイルエンドポイントの[動的ルーティング](/ja/guides/endpoints/#paramsと動的ルーティング)にも使用できます。
 
 :::tip
-TypeScriptを使用する場合は、型ユーティリティ[`GetStaticPaths`](/ja/guides/typescript/#getstaticpathsの型推論)を使用して、`params`と`props`へ型安全にアクセスできるようにします。
+TypeScriptを使用する場合は、型ユーティリティ[`GetStaticPaths`](/ja/guides/typescript/#getstaticpathsの型を推論する)を使用して、`params`と`props`へ型安全にアクセスできるようにします。
 :::
 
 :::caution
