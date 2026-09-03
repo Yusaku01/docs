@@ -262,7 +262,7 @@ MDXインテグレーションをインストールすると、Astroプロジェ
 
 ### Markdown設定から継承されたオプション
 
-すべての[`markdown`設定オプション](/ja/reference/configuration-reference/#markdown-options)は、MDXインテグレーションで個別に設定できます。これには[Markdownプロセッサ](#processor)や構文ハイライトなどが含まれます。オプションは、Markdown設定のオプションにデフォルト設定されます（これを変更するには、[`extendMarkdownConfig`オプション](#extendmarkdownconfig)を参照してください）。
+すべての[`markdown`設定オプション](/ja/reference/configuration-reference/#markdownのオプション)は、MDXインテグレーションで個別に設定できます。これには[Markdownプロセッサ](#processor)や構文ハイライトなどが含まれます。オプションは、Markdown設定のオプションにデフォルト設定されます（これを変更するには、[`extendMarkdownConfig`オプション](#extendmarkdownconfig)を参照してください）。
 
 ```js title="astro.config.mjs"
 import { defineConfig } from 'astro/config';
@@ -288,7 +288,7 @@ export default defineConfig({
 });
 ```
 
-<ReadMore>オプションの完全なリストについては、[Markdownオプションのリファレンス](/ja/reference/configuration-reference/#markdown-options)を参照してください。</ReadMore>
+<ReadMore>オプションの完全なリストについては、[Markdownオプションのリファレンス](/ja/reference/configuration-reference/#markdownのオプション)を参照してください。</ReadMore>
 
 ### `processor`
 
@@ -324,7 +324,7 @@ export default defineConfig({
 <Since v="0.15.0" pkg="@astrojs/mdx" />
 </p>
 
-MDXは、デフォルトで[プロジェクトの既存のMarkdown設定](/ja/reference/configuration-reference/#markdown-options)を拡張します。個々のオプションを上書きするには、MDX設定で同等のオプションを指定します。
+MDXは、デフォルトで[プロジェクトの既存のMarkdown設定](/ja/reference/configuration-reference/#markdownのオプション)を拡張します。個々のオプションを上書きするには、MDX設定で同等のオプションを指定します。
 
 たとえば、`.mdx`ファイルに別の構文ハイライターと別のプラグインのセットが必要だとします。`extendMarkdownConfig`をデフォルトで有効にしたまま、これらのオプションを次のように適用できます。
 

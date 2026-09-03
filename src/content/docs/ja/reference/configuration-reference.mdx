@@ -1,0 +1,3082 @@
+---
+title: 設定リファレンス
+i18nReady: true
+githubURL: https://github.com/withastro/astro/blob/main/packages/astro/src/types/public/config.ts
+---
+
+import Since from '~/components/Since.astro'
+
+次のリファレンスでは、Astroでサポートされるすべての設定オプションを説明します。Astroの設定について詳しくは、[Astroの設定](/ja/guides/configuring-astro/)ガイドを参照してください。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config'
+
+export default defineConfig({
+  // ここに設定オプションを記述します...
+})
+```
+## トップレベルのオプション
+
+
+### site
+
+<p>
+
+**型:** `string`
+</p>
+
+デプロイ後の最終的なURLです。Astroはこの完全なURLを使用して、最終ビルドでサイトマップと正規URLを生成します。Astroを最大限に活用するため、このオプションを設定することを強く推奨します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  site: 'https://www.my-site.dev'
+});
+```
+
+### base
+
+<p>
+
+**型:** `string`
+</p>
+
+デプロイ先のベースパスです。Astroは、開発時と本番ビルドの両方で、このパスをページとアセットのルートとして使用します。
+
+次の例では、`astro dev`によって`/docs`でサーバーが起動します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  base: '/docs'
+});
+```
+
+このオプションを使用する場合、すべての静的アセットのインポートとURLの先頭にベースパスを追加する必要があります。この値には`import.meta.env.BASE_URL`からアクセスできます。
+
+`import.meta.env.BASE_URL`の値は、`base`に設定した値にかかわらず、`trailingSlash`の設定によって決まります。
+
+`trailingSlash: "always"`を設定すると、末尾のスラッシュが常に含まれます。`trailingSlash: "never"`を設定すると、`base`にスラッシュが含まれていても、`BASE_URL`には末尾のスラッシュが含まれません。
+
+また、Astroは設定された`config.base`の値を内部で処理してからインテグレーションで利用できるようにします。インテグレーションが読み取る`config.base`の値も、同様に`trailingSlash`の設定によって決まります。
+
+次の例では、処理後の`import.meta.env.BASE_URL`と`config.base`の値はどちらも`/docs`になります。
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  base: '/docs/',
+  trailingSlash: "never"
+});
+```
+
+次の例では、処理後の`import.meta.env.BASE_URL`と`config.base`の値はどちらも`/docs/`になります。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  base: '/docs',
+  trailingSlash: "always"
+});
+```
+
+### trailingSlash
+
+<p>
+
+**型:** `'always' | 'never' | 'ignore'`<br />
+**デフォルト:** `'ignore'`
+</p>
+
+開発サーバーとオンデマンドでレンダリングされるページで、末尾のスラッシュに対するルートの照合動作を設定します。次のオプションから選択します。
+  - `'ignore'` - 末尾に「/」があるかどうかにかかわらずURLを照合します。「/about」と「/about/」のリクエストは、どちらも同じルートに一致します。
+  - `'always'` - 末尾にスラッシュを含むURL（「/about/」など）だけを照合します。本番環境では、末尾にスラッシュがないオンデマンドレンダリングURLへのリクエストは、正しいURLへリダイレクトされます。開発環境では、`always`が設定されていることを知らせる警告ページが表示されます。
+  - `'never'` - 末尾にスラッシュを含まないURL（「/about」など）だけを照合します。本番環境では、末尾にスラッシュがあるオンデマンドレンダリングURLへのリクエストは、正しいURLへリダイレクトされます。開発環境では、`never`が設定されていることを知らせる警告ページが表示されます。
+
+本番環境でGETリクエストがリダイレクトされる場合は、301（恒久的）リダイレクトになります。それ以外のリクエストメソッドでは、308（恒久的で、リクエストメソッドを維持）リダイレクトになります。
+
+事前レンダリングされたページの末尾のスラッシュはホスティングプラットフォームによって処理されるため、選択した設定が反映されない場合があります。
+詳しくは、ホスティングプラットフォームのドキュメントを参照してください。現時点では、この用途にAstroの[リダイレクト](#redirects)は使用できません。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  // 例：開発時に末尾のスラッシュを必須にする
+  trailingSlash: 'always'
+});
+```
+**関連項目:**
+- build.format
+
+### redirects
+
+<p>
+
+**型:** `Record<string, RedirectConfig>`<br />
+**デフォルト:** `{}`<br />
+<Since v="2.9.0" />
+</p>
+
+一致させるルートをキー、リダイレクト先のパスを値として、リダイレクトの対応関係を指定します。
+
+静的ルートと動的ルートの両方をリダイレクトできますが、同じ種類のルート間に限られます。
+たとえば、`'/article': '/blog/[...slug]'`というリダイレクトは設定できません。
+
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  redirects: {
+   '/old': '/new',
+   '/blog/[...slug]': '/articles/[...slug]',
+   '/about': 'https://example.com/about',
+   '/news': {
+     status: 302,
+     destination: 'https://example.com/news'
+   },
+   // '/product1/', '/product1' // この指定はサポートされていません
+  }
+});
+```
+
+
+アダプターがインストールされていない静的生成サイトでは、[`<meta http-equiv="refresh">`タグ](https://developer.mozilla.org/ja/docs/Web/HTML/Reference/Elements/meta#http-equiv)を使用したクライアントリダイレクトが生成され、ステータスコードはサポートされません。
+
+SSRを使用する場合や、`output: static`モードで静的アダプターを使用する場合は、ステータスコードがサポートされます。
+Astroは、リダイレクトされたGETリクエストをステータス`301`で返し、それ以外のリクエストメソッドにはステータス`308`を使用します。
+
+リダイレクト設定にオブジェクトを指定すると、[リダイレクトのステータスコード](https://developer.mozilla.org/ja/docs/Web/HTTP/Reference/Status#リダイレクトメッセージ)をカスタマイズできます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  redirects: {
+    '/other': {
+      status: 302,
+      destination: '/place',
+    },
+  }
+});
+```
+
+### output
+
+<p>
+
+**型:** `'static' | 'server'`<br />
+**デフォルト:** `'static'`
+</p>
+
+ビルドの出力先を指定します。
+
+- `'static'` - デフォルトですべてのページを事前レンダリングします。事前レンダリングを無効にするページがなければ、完全に静的なサイトを出力します。
+- `'server'` - デフォルトですべてのページにサーバーサイドレンダリング（SSR）を使用し、常にサーバーレンダリングされたサイトを出力します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  output: 'static'
+});
+```
+**関連項目:**
+- adapter
+
+### adapter
+
+<p>
+
+**型:** `AstroIntegration`
+</p>
+
+ビルドアダプターを使用して、任意のサーバー、サーバーレス、エッジホストへデプロイします。Astro公式アダプター（[Cloudflare](/ja/guides/integrations-guide/cloudflare/)、[Netlify](/ja/guides/integrations-guide/netlify/)、[Node.js](/ja/guides/integrations-guide/node/)、[Vercel](/ja/guides/integrations-guide/vercel/)）のいずれかをインポートするか、[コミュニティアダプター](https://astro.build/integrations/2/?search=&categories%5B%5D=adapters)を探して、Astroプロジェクトでオンデマンドレンダリングを有効にします。
+
+Astroのサーバーレンダリングオプションについて詳しくは、[オンデマンドレンダリングガイド](/ja/guides/on-demand-rendering/)を参照してください。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import netlify from '@astrojs/netlify';
+
+export default defineConfig({
+  // 例：Netlifyへのサーバーレスデプロイ用にビルド
+  adapter: netlify(),
+});
+```
+**関連項目:**
+- output
+
+### integrations
+
+<p>
+
+**型:** `AstroIntegration[]`
+</p>
+
+独自のインテグレーションでAstroを拡張します。インテグレーションを使用すると、フレームワークのサポート（Solid.jsなど）、新機能（サイトマップなど）、新しいライブラリ（Partytownなど）をまとめて追加できます。
+
+Astroインテグレーションを使い始める方法については、[インテグレーションガイド](/ja/guides/integrations/)を参照してください。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
+import mdx from '@astrojs/mdx';
+
+export default defineConfig({
+  // 例：AstroにReactとMDXのサポートを追加
+  integrations: [react(), mdx()]
+});
+```
+
+### root
+
+<p>
+
+**型:** `string`<br />
+**CLI:** `--root`<br />
+**デフォルト:** `"."`（現在の作業ディレクトリ）
+</p>
+
+このオプションは、プロジェクトのルートディレクトリ以外で`astro` CLIコマンドを実行する場合にのみ指定してください。Astroは設定ファイルを見つける前にプロジェクトルートを知る必要があるため、通常、このオプションはAstro設定ファイルではなくCLIから指定します。
+
+相対パス（`--root: './my-project'`など）を指定すると、Astroは現在の作業ディレクトリを基準に解決します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  root: './my-project-directory'
+});
+```
+
+次の例では、CLIを使用してルートディレクトリを設定します。
+
+```bash
+astro build --root ./my-project-directory
+```
+
+### srcDir
+
+<p>
+
+**型:** `string`<br />
+**デフォルト:** `"./src"`
+</p>
+
+Astroがサイトを読み込むディレクトリを設定します。
+
+値には、ファイルシステムの絶対パスまたはプロジェクトルートからの相対パスを指定できます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  srcDir: './www'
+});
+```
+
+### publicDir
+
+<p>
+
+**型:** `string`<br />
+**デフォルト:** `"./public"`
+</p>
+
+静的アセットのディレクトリを設定します。このディレクトリ内のファイルは、開発時には`/`で配信され、ビルド時にはビルドディレクトリへコピーされます。これらのファイルは変換やバンドルを行わず、常にそのまま配信またはコピーされます。
+
+値には、ファイルシステムの絶対パスまたはプロジェクトルートからの相対パスを指定できます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  publicDir: './my-custom-publicDir-directory'
+});
+```
+
+### outDir
+
+<p>
+
+**型:** `string`<br />
+**デフォルト:** `"./dist"`
+</p>
+
+`astro build`が最終ビルドを書き込むディレクトリを設定します。
+
+値には、ファイルシステムの絶対パスまたはプロジェクトルートからの相対パスを指定できます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  outDir: './my-custom-build-directory'
+});
+```
+**関連項目:**
+- build.server
+
+### cacheDir
+
+<p>
+
+**型:** `string`<br />
+**デフォルト:** `"./node_modules/.astro"`
+</p>
+
+ビルド成果物をキャッシュするディレクトリを設定します。このディレクトリ内のファイルは、後続のビルド時間を短縮するために使用されます。
+
+値には、ファイルシステムの絶対パスまたはプロジェクトルートからの相対パスを指定できます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  cacheDir: './my-custom-cache-directory'
+});
+```
+
+### compressHTML
+
+<p>
+
+**型:** `boolean | "jsx"`<br />
+**デフォルト:** `'jsx'`
+</p>
+
+AstroがHTML内の空白を処理する方法を制御します。これは開発モードと最終ビルドの出力の両方に影響します。
+
+v7.0以降、AstroはデフォルトでReactなどのフレームワークが使用するJSXの空白ルールを適用します。要素の前後にある空白と改行を削除し、複数行のテキストを1行にまとめ、1行内の空白（2つのインライン要素間のスペースなど）を保持します。本来削除される空白を残すには、`{" "}`のような構文でソースに明示的に含めてください。
+
+このオプションを`true`に設定すると、`.astro`コンポーネントから改行を含む空白を、情報を失わない範囲で削除します。HTMLの見た目を維持するため、必要な空白は保持される場合があります。
+
+このオプションを`false`に設定すると、HTML圧縮が無効になり、すべての空白が保持されます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  compressHTML: true
+  // or:
+  // compressHTML: false
+});
+```
+
+### scopedStyleStrategy
+
+<p>
+
+**型:** `'where' | 'class' | 'attribute'`<br />
+**デフォルト:** `'attribute'`<br />
+<Since v="2.4" />
+</p>
+
+Astroコンポーネント内のスタイルをスコープ化する方法を指定します。次のオプションから選択します。
+  - `'where'` - `:where`セレクターを使用し、詳細度を増加させません。
+  - `'class'` - クラスベースのセレクターを使用し、詳細度を1増加させます。
+  - `'attribute'` - `data-`属性を使用し、詳細度を1増加させます。
+
+`'class'`は、Astroコンポーネント内の要素セレクターでグローバルスタイルのデフォルト（グローバルスタイルシートなど）を確実に上書きしたい場合に便利です。
+`'where'`では詳細度をより細かく制御できますが、適用するセレクターを制御するには、より詳細度の高いセレクターやレイヤーなどのツールを使用する必要があります。
+`'attribute'`は、要素の`class`属性を操作していて、独自のスタイルロジックとAstroのスタイル適用との競合を避ける必要がある場合に便利です。
+
+### prerenderConflictBehavior
+
+<p>
+
+**型:** `'error' | 'warn' | 'ignore'`<br />
+**デフォルト:** `'warn'`<br />
+<Since v="6.0" />
+</p>
+
+2つのルートが同じ事前レンダリングURLを生成した場合のデフォルト動作を決めます。
+- `error`：ビルドを失敗させてエラーを表示し、競合の解決を求めます。
+- `warn`（デフォルト）：競合が発生したときに警告を記録しますが、もっとも優先度の高いルートを使用してビルドします。
+- `ignore`：競合が発生しても警告せず、もっとも優先度の高いルートを使用してビルドします。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  prerenderConflictBehavior: 'error'
+});
+```
+
+### vite
+
+<p>
+
+**型:** `ViteUserConfig`
+</p>
+
+追加の設定オプションをViteへ渡します。必要な高度な設定をAstroがサポートしていない場合に便利です。
+
+`vite`設定オブジェクトの完全なドキュメントは、[vite.dev](https://ja.vite.dev/config/)で確認できます。
+
+#### 例
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  vite: {
+    ssr: {
+      // 例：必要に応じて、問題のあるパッケージのSSR処理を強制的にスキップ
+      external: ['broken-npm-package'],
+    }
+  }
+});
+```
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  vite: {
+    // 例：独自のViteプラグインをAstroプロジェクトへ直接追加
+    plugins: [myPlugin()],
+  }
+});
+```
+
+### security
+
+<p>
+
+**型:** `Record<"checkOrigin", boolean> | undefined`<br />
+**デフォルト:** `{checkOrigin: true}`<br />
+<Since v="4.9.0" />
+</p>
+
+AstroのWebサイトでセキュリティ対策を有効にします。
+
+これらの機能は、`server`モードでオンデマンドレンダリング（SSR）されるページ、または`static`モードで事前レンダリングを無効にしたページでのみ利用できます。
+
+デフォルトでは、Astroはオンデマンドレンダリングされるページへの各リクエストについて、「origin」ヘッダーが送信先URLと一致することを自動的に確認します。`checkOrigin`を`false`に設定すると、この動作を無効にできます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  output: "server",
+  security: {
+    checkOrigin: false
+  }
+});
+```
+
+#### security.checkOrigin
+
+<p>
+
+**型:** `boolean`<br />
+**デフォルト:** `true`<br />
+<Since v="4.9.0" />
+</p>
+
+すべてのモダンブラウザーによって自動的に渡される「origin」ヘッダーが、各`Request`の送信先URLと一致することを確認します。これは、クロスサイトリクエストフォージェリ（CSRF）に対する保護に使用されます。
+
+「origin」の確認はオンデマンドレンダリングされるページでのみ実行されます。また、次の`content-type`ヘッダーのいずれかを持つ`POST`、`PATCH`、`DELETE`、`PUT`リクエストだけが対象です：`'application/x-www-form-urlencoded'`、`'multipart/form-data'`、`'text/plain'`。
+
+「origin」ヘッダーがリクエストの`pathname`と一致しない場合、Astroは403ステータスコードを返し、ページをレンダリングしません。
+
+#### security.allowedDomains
+
+<p>
+
+**型:** `Array<RemotePattern>`<br />
+**デフォルト:** `[]`<br />
+<Since v="5.14.2" />
+</p>
+
+SSRを使用する際に、受信リクエストで許可するホストパターンの一覧を定義します。設定すると、Astroはセキュリティのため`X-Forwarded-Host`ヘッダーをこれらのパターンと照合します。許可されたパターンに一致しない場合、このヘッダーは無視され、代わりにリクエストの元のホストが使用されます。
+
+これにより、攻撃者が細工した`X-Forwarded-Host`ヘッダーを送信して`Astro.url`の値を操作する、ホストヘッダーインジェクション攻撃を防ぎます。
+
+各パターンには`protocol`、`hostname`、`port`を指定できます。指定された項目はすべて検証されます。
+パターンではワイルドカードを使用して、ホスト名を柔軟に照合できます。
+
+- `*.example.com` - 1階層のサブドメインだけに一致します（たとえば`sub.example.com`には一致しますが、`deep.sub.example.com`には一致しません）。
+- `**.example.com` - 任意の深さのサブドメインに一致します（たとえば`sub.example.com`と`deep.sub.example.com`の両方）。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    // 例：https上のexample.comの任意のサブドメインを許可
+    allowedDomains: [
+      {
+        hostname: '**.example.com',
+        protocol: 'https'
+      },
+      {
+        hostname: 'staging.myapp.com',
+        protocol: 'https',
+        port: '443'
+      }
+    ]
+  }
+});
+```
+
+信頼できるリバースプロキシの背後にあり、動的ドメインを使用するアプリケーションなど、特定の状況ではすべてのドメインを許可する必要がある場合があります。その場合は、空のオブジェクトを使用します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    // 任意のドメインを許可（必要な場合にのみ使用）
+    allowedDomains: [{}]
+  }
+});
+```
+
+設定しない場合、`X-Forwarded-Host`ヘッダーは信頼されず、無視されます。
+
+#### security.actionBodySizeLimit
+
+<p>
+
+**型:** `number`<br />
+**デフォルト:** `1048576`（1 MB）<br />
+<Since v="5.18.0" />
+</p>
+
+アクションのリクエスト本文に許可する最大サイズをバイト単位で設定します。
+
+不正利用を防ぐため、アクションのリクエスト本文はデフォルトで1 MB（1048576バイト）に制限されます。ファイルアップロードを処理する場合など、アクションがより大きなペイロードを受け取る必要がある場合は、この上限を増やせます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    actionBodySizeLimit: 10 * 1024 * 1024 // 10 MB
+  }
+});
+```
+
+#### security.serverIslandBodySizeLimit
+
+<p>
+
+**型:** `number`<br />
+**デフォルト:** `1048576`（1 MB）<br />
+<Since v="6.0.0" />
+</p>
+
+サーバーアイランドのリクエスト本文に許可する最大サイズをバイト単位で設定します。リクエスト本文には、アイランドコンポーネントへ渡される暗号化されたプロパティとスロットHTMLが含まれます。
+
+不正利用を防ぐため、サーバーアイランドのリクエスト本文はデフォルトで1 MB（1048576バイト）に制限されます。サーバーアイランドがより大きなペイロードを受け取る必要がある場合は、この上限を増やせます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    serverIslandBodySizeLimit: 10 * 1024 * 1024 // 10 MB
+  }
+});
+```
+
+#### security.csp
+
+<p>
+
+**型:** `boolean | object`<br />
+**デフォルト:** `false`<br />
+<Since v="6.0.0" />
+</p>
+
+[コンテンツセキュリティポリシー（CSP）](https://developer.mozilla.org/ja/docs/Web/HTTP/Guides/CSP)のサポートを有効にします。ドキュメントが読み込めるリソースを制御して、特定の種類のセキュリティ脅威を最小限に抑えます。これにより、[クロスサイトスクリプティング（XSS）](https://developer.mozilla.org/ja/docs/Glossary/Cross-site_scripting)攻撃に対する保護が強化されます。
+
+この機能を有効にすると、Astroが処理・バンドルするスクリプトとスタイルの取り扱いに、デフォルトで追加のセキュリティが適用されます。また、これらやその他のコンテンツタイプをさらに設定できます。
+
+この機能には、次の制限があります。
+- 外部スクリプトと外部スタイルはそのままではサポートされませんが、[独自のハッシュを指定](#securitycspscriptdirectivehashes)できます。
+- `<ClientRouter />`を使用する[Astroのビュートランジション](/ja/guides/view-transitions/)はサポートされません。AstroによるネイティブのView Transitions APIとNavigation APIの拡張機能を使用していない場合は、代わりに[ブラウザー標準のView Transition APIへの移行](https://events-3bg.pages.dev/jotter/astro-view-transitions/)を検討できます。
+- 現在、Shikiはサポートされていません。Shikiの関数はインラインスタイルを使用する設計であり、AstroのCSP実装では動作しません。プロジェクトでCSPとシンタックスハイライトの両方が必要な場合は、[`<Prism />`の使用](/ja/guides/syntax-highlighting/#prism-)を検討してください。
+- ディレクティブのリソースに`'unsafe-inline'`が含まれる場合、Astroはそのディレクティブにハッシュを出力しません。CSP仕様では、同じディレクティブにハッシュまたはnonceがあるとブラウザーは`'unsafe-inline'`を無視するため、Astroは`'unsafe-inline'`の動作を維持するためにハッシュを抑制します。これにより、そのディレクティブのセキュリティは`'unsafe-inline'`と同じ水準まで低下することに注意してください。
+
+:::note
+Vite開発サーバーの性質上、この機能は`dev`モードではサポートされません。代わりに、Astroプロジェクトで`build`と`preview`を使用してテストできます。
+:::
+
+有効にすると、Astroは各ページの`<head>`要素内に`<meta>`要素を追加します。
+この要素には`http-equiv="content-security-policy"`属性が設定され、`content`属性にはページで使用されるスクリプトとスタイルに基づいて、`script-src`と`style-src`の[ディレクティブ](#securitycspdirectives)が設定されます。
+
+```html
+
+<head>
+  <meta
+    http-equiv="content-security-policy"
+    content="
+    script-src 'self' 'sha256-somehash';
+    style-src 'self' 'sha256-somehash';
+    "
+  >
+</head>
+```
+
+追加のオプションを含む設定オブジェクトでこの機能を有効にすると、`<meta>`要素をさらにカスタマイズできます。
+
+##### security.csp.algorithm
+
+<p>
+
+**型:** `"SHA-256" | "SHA-384" | "SHA-512"`<br />
+**デフォルト:** `'SHA-256'`<br />
+<Since v="6.0.0" />
+</p>
+
+Astroが出力するスタイルとスクリプトのハッシュを生成する際に使用する[ハッシュ関数](https://developer.mozilla.org/ja/docs/Glossary/Hash_function)です。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    csp: {
+     algorithm: 'SHA-512'
+    }
+  }
+});
+```
+
+##### security.csp.directives
+
+<p>
+
+**型:** `Array<string>`<br />
+**デフォルト:** `[]`<br />
+<Since v="6.0.0" />
+</p>
+
+特定のコンテンツタイプに有効なソースを定義する[CSPディレクティブ](https://content-security-policy.com/#directive)の一覧です。デフォルトで含まれる`script-src`と`style-src`以外のディレクティブを指定し、すべてのページへ追加します。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' https://images.cdn.example.com"
+      ]
+    }
+  }
+});
+```
+ビルド後、`<meta>`要素の`content`値には、Astroのデフォルトディレクティブとともに指定したディレクティブが追加されます。
+
+```html
+<meta
+  http-equiv="content-security-policy"
+  content="
+    default-src 'self';
+    img-src 'self' 'https://images.cdn.example.com';
+    script-src 'self' 'sha256-somehash';
+    style-src 'self' 'sha256-somehash';
+  "
+>
+```
+
+##### security.csp.styleDirective
+
+<p>
+
+**型:** `CspStyleDirective`<br />
+**デフォルト:** `undefined`<br />
+<Since v="6.0.0" />
+</p>
+
+[`resources`](#securitycspstyledirectiveresources)プロパティで`style-src`ディレクティブのデフォルトソースを上書きしたり、レンダリングする追加の[ハッシュ](#securitycspstyledirectivehashes)を指定したりできる設定オブジェクトです。
+
+###### security.csp.styleDirective.hashes
+
+<p>
+
+**型:** `Array<CspHashEntry>`<br />
+**デフォルト:** `[]`<br />
+<Since v="6.0.0" />
+</p>
+
+レンダリングする追加のハッシュの一覧です。
+
+`sha384-`、`sha512-`、`sha256-`のいずれかで始まるハッシュを指定する必要があります。それ以外の値は検証エラーになります。これらのハッシュはすべてのページへ追加されます。
+
+Astro v7.1以降、各エントリーには文字列またはオブジェクトを指定できます。オブジェクトでは、`kind`フィールドを使用してハッシュのスコープを変更できます。`kind`フィールドには次の値を指定できます。
+- `"element"`：ハッシュを`style-src-elem`ディレクティブに保存します。
+- `"attribute"`：ハッシュを`style-src-attr`ディレクティブに保存します。
+- `"default"`：ハッシュを`style-src`ディレクティブに保存します。
+
+`"default"`ハッシュは`style-src`に追加されます。`kind: "element"`を使用した場合は、代わりに`style-src-elem`へ追加されます。`style-src-attr`へ追加されることはありません。Astroが生成するハッシュにも同じルールが適用されます。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    csp: {
+      styleDirective: {
+        hashes: [
+          "sha384-styleHash",
+          "sha512-styleHash",
+          "sha256-styleHash"
+        ]
+      }
+    }
+  }
+});
+```
+
+ビルド後、`<meta>`要素の`style-src`ディレクティブには、追加したハッシュが含まれます。
+
+```html
+<meta
+  http-equiv="content-security-policy"
+  content="
+    style-src 'self' 'sha384-styleHash' 'sha512-styleHash' 'sha256-styleHash' 'sha256-generatedByAstro';
+  "
+>
+```
+
+ハッシュのスコープを`"element"`にすると、代わりに`style-src-elem`へ保存されます。Astroが生成するハッシュも同じ場所へ移動します。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    csp: {
+      styleDirective: {
+        hashes: [{ hash: "sha256-styleHash", kind: "element" }]
+      }
+    }
+  }
+});
+```
+
+ビルド後、`<meta>`要素ではハッシュが`style-src`ではなく`style-src-elem`ディレクティブに含まれます。
+
+```html
+<meta
+  http-equiv="content-security-policy"
+  content="
+    style-src 'self';
+    style-src-elem 'self' 'sha256-styleHash' 'sha256-generatedByAstro';
+  "
+>
+```
+
+###### security.csp.styleDirective.resources
+
+<p>
+
+**型:** `Array<CspResourceEntry>`<br />
+**デフォルト:** `[]`<br />
+<Since v="6.0.0" />
+</p>
+
+Astroのデフォルトソースを上書きする、`style-src`ディレクティブの有効なソース一覧です。デフォルトでは`'self'`が含まれないため、保持する場合はこの一覧に追加する必要があります。これらのリソースはすべてのページへ追加されます。
+
+Astro v7.1以降、各エントリーには文字列またはオブジェクトを指定できます。オブジェクトでは、`kind`フィールドを使用してソースのスコープを変更できます。`kind`フィールドには次の値を指定できます。
+- `"element"`：ソースを`style-src-elem`ディレクティブに保存します。
+- `"attribute"`：ソースを`style-src-attr`ディレクティブに保存します。
+- `"default"`：ソースを`style-src`ディレクティブに保存します。
+
+`"attribute"`ソースには`'none'`、`'unsafe-hashes'`、`'unsafe-inline'`、`'report-sample'`のいずれかを指定する必要があります。`'unsafe-hashes'`は`"element"`と組み合わせて使用できません。一般的な用途として、`{ resource: "'unsafe-inline'", kind: "attribute" }`を指定して、`define:vars`やShikiなどによるインライン`style`属性を許可できます。
+
+ハッシュとは異なり、`"default"`ソースは移動せず、常に`style-src`だけに残ります。「default」と特定のリソース（`"element"`や`"attribute"`など）が混在する場合、Astroは警告を出力します。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    csp: {
+      styleDirective: {
+        resources: [
+          "'self'",
+          "https://styles.cdn.example.com"
+        ]
+      }
+    }
+  }
+});
+```
+
+ビルド後、`<meta>`要素の`style-src`ディレクティブには、デフォルトの代わりに指定したソースが適用されます。
+
+```html
+<head>
+  <meta
+    http-equiv="content-security-policy"
+    content="
+     style-src 'self' https://styles.cdn.example.com 'sha256-somehash';
+    "
+  >
+</head>
+```
+
+`"default"`ソースは、より具体的なディレクティブへコピーされません。次の例では、`"default"`ソースと`"element"`ソースが別々のディレクティブへレンダリングされます。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    csp: {
+      styleDirective: {
+        resources: [
+          "https://styles.cdn.example.com",
+          { resource: "https://elements.cdn.example.com", kind: "element" }
+        ]
+      }
+    }
+  }
+});
+```
+
+ビルド後、`<meta>`要素では`https://styles.cdn.example.com`が`style-src`だけに保持されます。この値は`style-src-elem`には追加されず、`<style>`要素と`<link>`要素には適用されません。一方、生成されたハッシュは`style-src-elem`へ移動します。
+
+```html
+<meta
+  http-equiv="content-security-policy"
+  content="
+    style-src https://styles.cdn.example.com;
+    style-src-elem https://elements.cdn.example.com 'sha256-generatedByAstro';
+  "
+>
+```
+
+リソースが複数回または複数のソースから挿入された場合（`csp`設定で定義し、[CSPランタイムAPI](/ja/reference/api-reference/#csp)で追加した場合など）、Astroはすべてのリソースを統合して重複を取り除き、`<meta>`要素を作成します。
+
+##### security.csp.scriptDirective
+
+<p>
+
+**型:** `CspScriptDirective`<br />
+**デフォルト:** `undefined`<br />
+<Since v="6.0.0" />
+</p>
+
+[`resources`](#securitycspscriptdirectiveresources)プロパティで`script-src`ディレクティブのデフォルトソースを上書きしたり、レンダリングする追加の[ハッシュ](#securitycspscriptdirectivehashes)を指定したりできる設定オブジェクトです。
+
+###### security.csp.scriptDirective.hashes
+
+<p>
+
+**型:** `Array<CspHashEntry>`<br />
+**デフォルト:** `[]`<br />
+<Since v="6.0.0" />
+</p>
+
+レンダリングする追加のハッシュの一覧です。
+
+`sha384-`、`sha512-`、`sha256-`のいずれかで始まるハッシュを指定する必要があります。それ以外の値は検証エラーになります。これらのハッシュはすべてのページへ追加されます。
+
+Astro v7.1以降、各エントリーには文字列またはオブジェクトを指定できます。オブジェクトでは、`kind`フィールドを使用してハッシュのスコープを変更できます。`kind`フィールドには次の値を指定できます。
+- `"element"`：ハッシュを`script-src-elem`ディレクティブに保存します。
+- `"attribute"`：ハッシュを`script-src-attr`ディレクティブに保存します。
+- `"default"`：ハッシュを`script-src`ディレクティブに保存します。
+
+`"default"`ハッシュは`script-src`に追加されます。`kind: "element"`を使用した場合は、代わりに`script-src-elem`へ追加されます。`script-src-attr`へ追加されることはありません。Astroが生成するハッシュにも同じルールが適用されます。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    csp: {
+      scriptDirective: {
+        hashes: [
+          "sha384-scriptHash",
+          "sha512-scriptHash",
+          "sha256-scriptHash"
+        ]
+      }
+    }
+  }
+});
+```
+
+ビルド後、`<meta>`要素の`script-src`ディレクティブには、追加したハッシュが含まれます。
+
+```html
+<meta
+  http-equiv="content-security-policy"
+  content="
+    script-src 'self' 'sha384-scriptHash' 'sha512-scriptHash' 'sha256-scriptHash' 'sha256-generatedByAstro';
+  "
+>
+```
+
+ハッシュのスコープを`"element"`にすると、代わりに`script-src-elem`へ保存されます。Astroが生成するハッシュも同じ場所へ移動します。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    csp: {
+      scriptDirective: {
+        hashes: [{ hash: "sha256-scriptHash", kind: "element" }]
+      }
+    }
+  }
+});
+```
+
+ビルド後、`<meta>`要素ではハッシュが`script-src`ではなく`script-src-elem`ディレクティブに含まれます。
+
+```html
+<meta
+  http-equiv="content-security-policy"
+  content="
+    script-src 'self';
+    script-src-elem 'self' 'sha256-scriptHash' 'sha256-generatedByAstro';
+  "
+>
+```
+
+###### security.csp.scriptDirective.resources
+
+<p>
+
+**型:** `Array<CspResourceEntry>`<br />
+**デフォルト:** `[]`<br />
+<Since v="6.0.0" />
+</p>
+
+Astroのデフォルトソースを上書きする、`script-src`ディレクティブの有効なソース一覧です。デフォルトでは`'self'`が含まれないため、保持する場合はこの一覧に追加する必要があります。これらのリソースはすべてのページへ追加されます。
+
+Astro v7.1以降、各エントリーには文字列またはオブジェクトを指定できます。オブジェクトでは、`kind`フィールドを使用してソースのスコープを変更できます。`kind`フィールドには次の値を指定できます。
+- `"element"`：ソースを`script-src-elem`ディレクティブに保存します。
+- `"attribute"`：ソースを`script-src-attr`ディレクティブに保存します。
+- `"default"`：ソースを`script-src`ディレクティブに保存します。
+
+`"attribute"`ソースには`'none'`、`'unsafe-hashes'`、`'unsafe-inline'`、`'report-sample'`のいずれかを指定する必要があります。`'unsafe-hashes'`は`"element"`と組み合わせて使用できません。
+
+ハッシュとは異なり、`"default"`ソースは移動せず、常に`script-src`だけに残ります。ただし、ブラウザーはフォールバックしないため、`"element"`または`"attribute"`ソースも指定する場合にはこの限りではありません。この状態になるとAstroは警告します。必要に応じて、より具体的なディレクティブにも追加してください。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    csp: {
+      scriptDirective: {
+        resources: [
+          "'self'", "https://cdn.example.com"
+        ]
+      }
+    }
+  }
+});
+```
+
+ビルド後、`<meta>`要素の`script-src`ディレクティブには、デフォルトの代わりに指定したソースが適用されます。
+
+```html
+<head>
+  <meta
+    http-equiv="content-security-policy"
+    content="
+     script-src 'self' https://cdn.example.com 'sha256-somehash';
+    "
+  >
+</head>
+```
+
+`"default"`ソースは、より具体的なディレクティブへコピーされません。次の例では、`"default"`ソースと`"element"`ソースが別々のディレクティブへレンダリングされます。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    csp: {
+      scriptDirective: {
+        resources: [
+          "https://cdn.example.com",
+          { resource: "https://elements.cdn.example.com", kind: "element" }
+        ]
+      }
+    }
+  }
+});
+```
+
+ビルド後、`<meta>`要素では`https://cdn.example.com`が`script-src`だけに保持されます。この値は`script-src-elem`には追加されず、`<script>`要素には適用されません。一方、生成されたハッシュは`script-src-elem`へ移動します。
+
+```html
+<meta
+  http-equiv="content-security-policy"
+  content="
+    script-src https://cdn.example.com;
+    script-src-elem https://elements.cdn.example.com 'sha256-generatedByAstro';
+  "
+>
+```
+
+リソースが複数回または複数のソースから挿入された場合（`csp`設定で定義し、[CSPランタイムAPI](/ja/reference/api-reference/#csp)で追加した場合など）、Astroはすべてのリソースを統合して重複を取り除き、`<meta>`要素を作成します。
+
+###### security.csp.scriptDirective.strictDynamic
+
+<p>
+
+**型:** `boolean`<br />
+**デフォルト:** `false`<br />
+<Since v="6.0.0" />
+</p>
+
+スクリプトの動的な挿入をサポートするため、[`strict-dynamic`キーワード](https://developer.mozilla.org/ja/docs/Web/HTTP/Guides/CSP#strict-dynamic_キーワード)を有効にします。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  security: {
+    csp: {
+      scriptDirective: {
+        strictDynamic: true
+      }
+    }
+  }
+});
+```
+
+これは`script-src`に適用されます。`kind: "element"`を使用して`script`リソースまたはハッシュのスコープを`script-src-elem`にも設定すると、`strict-dynamic`が`script-src-elem`へ継承され、動的に挿入された`<script>`要素が引き続き動作します。
+
+## ビルドのオプション
+
+
+### build.format
+
+<p>
+
+**型:** `('file' | 'directory' | 'preserve')`<br />
+**デフォルト:** `'directory'`
+</p>
+
+各ページの出力ファイル形式を制御します。この値はアダプターによって設定される場合があります。
+  - `'file'`：ページルートごとに、その名前を持つHTMLファイルを生成します（たとえば、`src/pages/about.astro`と`src/pages/about/index.astro`はどちらも`/about.html`をビルドします）。
+  - `'directory'`：ページごとに、`index.html`ファイルを含むディレクトリを生成します（たとえば、`src/pages/about.astro`と`src/pages/about/index.astro`はどちらも`/about/index.html`をビルドします）。
+  - `'preserve'`：ソースフォルダーの構造どおりにHTMLファイルを生成します（たとえば、`src/pages/about.astro`は`/about.html`を、`src/pages/about/index.astro`は`/about/index.html`をビルドします）。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  build: {
+    // 例：ビルド時に`page/index.html`ではなく`page.html`を生成
+    format: 'file'
+  }
+});
+```
+
+
+
+#### Astro.urlへの影響
+`build.format`の設定によって、ビルド中の`Astro.url`に設定される内容が決まります。
+- `directory` - フォルダーの動作を再現するため、`Astro.url.pathname`に末尾のスラッシュが含まれます（`/foo/`など）。
+- `file` - `Astro.url.pathname`に`.html`が含まれます（`/foo.html`など）。
+- `preserve` - `Astro.url.pathname`は各ページについて生成されたファイルと一致します。インデックスページには末尾のスラッシュ（`/foo/`など）が含まれ、インデックス以外のページには`.html`（`/foo.html`など）が含まれます。
+
+そのため、`new URL('./relative', Astro.url)`を使用して相対URLを作成すると、開発時とビルド時で一貫した動作が得られます。
+
+開発時に末尾のスラッシュの動作が不一致になることを防ぐには、ビルド形式に応じて[`trailingSlash`オプション](#trailingslash)を`'always'`または`'never'`に制限できます。
+- `directory` - `trailingSlash: 'always'`を設定します。
+- `file` - `trailingSlash: 'never'`を設定します。
+
+### build.client
+
+<p>
+
+**型:** `string`<br />
+**デフォルト:** `'./client'`
+</p>
+
+サーバーレンダリングされるページを持つWebサイトをビルドする際に、クライアント側のCSSとJavaScriptの出力ディレクトリを制御します。
+コードのビルド先は`outDir`で制御します。
+
+この値は`outDir`からの相対パスです。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  output: 'server',
+  build: {
+    client: './client'
+  }
+});
+```
+
+### build.server
+
+<p>
+
+**型:** `string`<br />
+**デフォルト:** `'./server'`
+</p>
+
+SSR向けにビルドする際のサーバーJavaScriptの出力ディレクトリを制御します。
+
+この値は`outDir`からの相対パスです。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  build: {
+    server: './server'
+  }
+});
+```
+
+### build.assets
+
+<p>
+
+**型:** `string`<br />
+**デフォルト:** `'_astro'`<br />
+<Since v="2.0.0" />
+</p>
+
+Astroが生成するアセット（バンドルされたJSやCSSなど）を配置する、ビルド出力内のディレクトリを指定します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  build: {
+    assets: '_custom'
+  }
+});
+```
+**関連項目:**
+- outDir
+
+### build.assetsPrefix
+
+<p>
+
+**型:** `string | Record<string, string>`<br />
+**デフォルト:** `undefined`<br />
+<Since v="2.2.0" />
+</p>
+
+Astroが生成するアセットリンクのプレフィックスを指定します。アセットを現在のサイトとは異なるドメインから配信する場合に使用できます。
+
+ローカルの`./dist/_astro`フォルダー内のアセットを、リモートドメインの対応する`/_astro/`フォルダーへアップロードする必要があります。
+`_astro`パスの名前を変更するには、`build.assets`に新しいディレクトリを指定します。
+
+同じドメインへアップロードされたすべてのアセット（`https://cdn.example.com/_astro/...`など）を取得するには、`base`の設定にかかわらず、`assetsPrefix`にルートドメインを文字列として設定します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  build: {
+    assetsPrefix: 'https://cdn.example.com'
+  }
+});
+```
+
+**追加:** `astro@4.5.0`
+
+`assetsPrefix`へオブジェクトを渡し、ファイル形式ごとに異なるドメインを指定することもできます。
+この場合、`fallback`プロパティが必須であり、それ以外のファイルにデフォルトで使用されます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  build: {
+    assetsPrefix: {
+      'js': 'https://js.cdn.example.com',
+      'mjs': 'https://js.cdn.example.com',
+      'css': 'https://css.cdn.example.com',
+      'fallback': 'https://cdn.example.com'
+    }
+  }
+});
+```
+
+### build.serverEntry
+
+<p>
+
+**型:** `string`<br />
+**デフォルト:** `'entry.mjs'`
+</p>
+
+SSR向けにビルドする際のサーバーエントリーポイントのファイル名を指定します。
+通常、このエントリーポイントはデプロイ先のホストに依存し、アダプターによって設定されます。
+
+ランタイムがJavaScriptモジュールとして検出できるよう、このファイルの末尾を`.mjs`にすることを推奨します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  build: {
+    serverEntry: 'main.mjs'
+  }
+});
+```
+
+### build.redirects
+
+<p>
+
+**型:** `boolean`<br />
+**デフォルト:** `true`<br />
+<Since v="2.6.0" />
+</p>
+
+ビルド中にリダイレクトをHTMLへ出力するかどうかを指定します。
+このオプションは`output: 'static'`モードにのみ適用されます。SSRでは、リダイレクトは他のレスポンスと同じように扱われます。
+
+このオプションは主に、リダイレクト用の特別な設定ファイルを持ち、HTMLベースのリダイレクトが不要なアダプター向けです。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  build: {
+    redirects: false
+  }
+});
+```
+
+### build.inlineStylesheets
+
+<p>
+
+**型:** `'always' | 'auto' | 'never'`<br />
+**デフォルト:** `auto`<br />
+<Since v="2.6.0" />
+</p>
+
+プロジェクトのスタイルを別のCSSファイルとしてブラウザーへ送信するか、`<style>`タグへインライン化するかを制御します。次のオプションから選択します。
+ - `'always'` - プロジェクトのスタイルを`<style>`タグへインライン化します。
+ - `'auto'` - `ViteConfig.build.assetsInlineLimit`（デフォルト：4 KB）より小さいスタイルシートだけをインライン化します。それ以外は外部スタイルシートとして送信します。
+ - `'never'` - プロジェクトのスタイルを外部スタイルシートとして送信します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  build: {
+    inlineStylesheets: `never`,
+  },
+});
+```
+
+### build.concurrency
+
+<p>
+
+**型:** `number`<br />
+**デフォルト:** `1`<br />
+<Since v="4.16.0" />
+</p>
+
+並列にビルドするページ数です。
+
+**ほとんどの場合、デフォルト値の`1`を変更しないでください。**
+
+全体のレンダリング時間を短縮する他の方法（時間のかかるfetch呼び出しやデータアクセスをまとめたりキャッシュしたりするなど）が利用できない、または不十分な場合にのみ、このオプションを使用してください。
+数値を大きくしすぎると、メモリ不足やJavaScriptがシングルスレッドであることにより、ページのレンダリングが遅くなる場合があります。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  build: {
+    concurrency: 2
+  }
+});
+```
+
+ :::caution[破壊的変更の可能性]
+ この機能は安定版であり、実験的機能ではありません。ただし、対応が難しい性能上の問題を解決することだけを目的としており、可能な限り高い性能を保つために[マイナーリリース](/ja/upgrade-astro/#セマンティックバージョニング)で破壊的変更が行われる可能性があります。この機能を使用している場合は、マイナーリリースごとに[AstroのCHANGELOG](https://github.com/withastro/astro/blob/refs/heads/next/packages/astro/CHANGELOG.md)を確認してください。
+ :::
+
+## サーバーのオプション
+
+`astro dev`と`astro preview`の両方で使用されるAstro開発サーバーをカスタマイズします。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  server: { port: 1234, host: true}
+});
+```
+
+実行するコマンド（「dev」、「preview」）に応じて異なる設定を指定するには、この設定オプションへ関数を渡すこともできます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  // 例：関数構文を使用してコマンドに応じてカスタマイズ
+  server: ({ command }) => ({ port: command === 'dev' ? 4321 : 4000 })
+});
+```
+
+### server.host
+
+<p>
+
+**型:** `string | boolean`<br />
+**デフォルト:** `false`<br />
+<Since v="0.24.0" />
+</p>
+
+サーバーが待ち受けるネットワークIPアドレス（localhost以外のIP）を設定します。
+- `false` - ネットワークIPアドレスへ公開しません。
+- `true` - LANやパブリックアドレスを含む、すべてのアドレスで待ち受けます。
+- `[custom-address]` - `[custom-address]`（`192.168.0.1`など）のネットワークIPアドレスへ公開します。
+
+### server.port
+
+<p>
+
+**型:** `number`<br />
+**デフォルト:** `4321`
+</p>
+
+サーバーが待ち受けるポートを設定します。
+
+指定したポートがすでに使用されている場合、Astroは次に利用できるポートを自動的に試します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  server: { port: 8080 }
+});
+```
+
+### server.allowedHosts
+
+<p>
+
+**型:** `Array<string> | true`<br />
+**デフォルト:** `[]`<br />
+<Since v="5.4.0" />
+</p>
+
+Astroが応答を許可するホスト名の一覧です。値を`true`に設定すると、すべてのホスト名が許可されます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  server: {
+    allowedHosts: ['staging.example.com', 'qa.example.com']
+  }
+});
+```
+
+### server.open
+
+<p>
+
+**型:** `string | boolean`<br />
+**デフォルト:** `false`<br />
+<Since v="4.1.0" />
+</p>
+
+起動時に開発サーバーをブラウザーウィンドウで開くかどうかを制御します。
+
+完全なURL文字列（「http://example.com」など）またはパス名（「/about」など）を渡して、開くURLを指定します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  server: { open: "/about" }
+});
+```
+
+### server.headers
+
+<p>
+
+**型:** `OutgoingHttpHeaders`<br />
+**デフォルト:** `{}`<br />
+<Since v="1.7.0" />
+</p>
+
+`astro dev`と`astro preview`で送信する独自のHTTPレスポンスヘッダーを設定します。
+
+## fetchFile
+
+<p>
+
+**型:** `string | null`<br />
+**デフォルト:** `'fetch'`<br />
+<Since v="7.0.0" />
+</p>
+
+`srcDir`内でfetchエントリーポイントとして使用するファイルをカスタマイズします。
+デフォルトは`'fetch'`で、Astroは`src/fetch.ts`（または`.js`、`.mjs`、`.mts`）を探します。
+
+fetchファイルを使用すると、AstroのリクエストパイプラインをWeb Fetch標準または独自のHonoミドルウェアと組み合わせられます。
+
+すでに`src/fetch.ts`ファイルを別の用途で使用している場合は、別のファイル名を定義するか、値を`null`に設定してエントリーポイントを無効にします。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  fetchFile: 'handler',
+});
+```
+
+リクエストパイプラインのカスタマイズについて詳しくは、[高度なルーティングガイド](/ja/guides/routing/#advanced-routing)を参照してください。
+
+## ロガーのオプション
+
+<p>
+
+**型:** `LoggerHandlerConfig`<br />
+**デフォルト:** `undefined`<br />
+<Since v="7.0.0" />
+</p>
+
+開発環境と本番環境で、Astroがメッセージを記録する方法を設定します。
+
+デフォルトでは、Astroは読みやすいログをコンソールへ出力する組み込みロガーを使用します。[独自のロガーハンドラー](/ja/reference/logger-reference/#custom-loggers)を指定するか、[組み込みのログハンドラー](/ja/reference/logger-reference/#built-in-loggers)のいずれかを使用して、この動作をカスタマイズできます。
+
+```js title="astro.config.mjs"
+import { defineConfig, logHandlers } from 'astro/config';
+
+export default defineConfig({
+  logger: logHandlers.json({ level: 'info' })
+});
+```
+
+詳しくは、[ロガーAPIリファレンス](/ja/reference/logger-reference/)を参照してください。
+
+### logger.entrypoint
+
+<p>
+
+**型:** `string | URL`<br />
+<Since v="7.0.0" />
+</p>
+
+[ロガー実装](/ja/reference/logger-reference/#the-logger-implementation)のエントリーポイントです。
+npmパッケージ、プロジェクトルートからの相対パス、またはプロジェクト内のファイルを指す`URL`を指定できます。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  logger: {
+    entrypoint: "@org/astro-logger",
+  }
+});
+```
+
+ロガーのエントリーポイントはJavaScriptファイルである必要があります。TypeScriptはサポートされません。Astroが実装の読み込みに失敗した場合は、デフォルトのロガーへフォールバックします。
+
+### logger.config
+
+<p>
+
+**型:** `Record<string, unknown> | undefined`<br />
+**デフォルト:** `{}`<br />
+<Since v="7.0.0" />
+</p>
+
+ログハンドラーの設定オブジェクトです。利用できるオプションは、設定したロガーによって異なります。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  logger: {
+    entrypoint: "@org/astro-logger",
+    config: {
+     level: "error"
+    }
+  }
+});
+```
+
+## セッションのオプション
+
+<p>
+
+**型:** `object | false`<br />
+<Since v="5.7.0" />
+</p>
+
+Astroプロジェクトのセッションストレージを設定します。セッションデータを永続的に保存し、異なるリクエスト間でアクセスできるようにします。
+
+一部のアダプターはデフォルトのセッションドライバーを提供しますが、独自の設定で上書きできます。
+
+```js title="astro.config.mjs"
+import { defineConfig, sessionDrivers } from 'astro/config';
+
+export default defineConfig({
+  session: {
+    driver: sessionDrivers.redis({
+      // オプションはドライバーによって異なり、必須のものもあります。
+      url: process.env.REDIS_URL
+    }),
+  }
+});
+```
+
+セッションドライバーはビルド時に設定されます。そのため、ドライバー設定で使用される環境変数はインライン化されます。[実行時に設定を上書き](/ja/guides/sessions/#実行時に設定を上書きする)するには、独自のドライバーエントリーポイントを作成する必要があります。
+
+Astro v7.2.0以降、このオプションを`false`に設定してセッションのサポートを無効にできます。セッションを無効にすると、セッションランタイムがSSRバンドルから除外され、アダプターはデフォルトのセッションドライバーを設定しません。バンドルの解析時間が重要なサーバーレスやエッジランタイムで役立ちます。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  session: false,
+});
+```
+
+詳しくは、[セッションガイド](/ja/guides/sessions/)を参照してください。
+
+### session.driver
+
+<p>
+
+**型:** `SessionDriverConfig | undefined`<br />
+<Since v="5.7.0" />
+</p>
+
+セッションストレージに使用するドライバーです。[Node](/ja/guides/integrations-guide/node/#セッション)、[Cloudflare](/ja/guides/integrations-guide/cloudflare/#sessions)、[Netlify](/ja/guides/integrations-guide/netlify/#セッション)アダプターはデフォルトのドライバーを自動的に設定します。別のドライバーを使用したい場合や、ドライバーを提供しないアダプターを使用している場合は、独自のドライバーを指定できます。
+
+```js title="astro.config.mjs" ins={7-9} ins=" sessionDrivers "
+import { defineConfig, sessionDrivers } from 'astro/config'
+import vercel from '@astrojs/vercel'
+
+export default defineConfig({
+  adapter: vercel(),
+  session: {
+    driver: sessionDrivers.redis({
+      url: process.env.REDIS_URL
+    }),
+  }
+});
+```
+
+:::note
+一部のドライバーでは、追加のパッケージをインストールする必要があります。また、環境変数や認証情報の設定が必要な場合もあります。詳しくは、[Unstorageのドキュメント](https://unstorage.unjs.io/drivers)を参照してください。
+:::
+
+### session.options
+
+<p>
+
+**型:** `Record<string, unknown> | undefined`<br />
+**デフォルト:** `{}`<br />
+<Since v="5.7.0" />
+</p>
+
+:::caution[非推奨]
+このオプションは非推奨であり、将来のメジャーバージョンで削除されます。代わりに、ドライバー関数へオプションを渡してください。
+:::
+
+セッションストレージに使用する、ドライバー固有のオプションです。利用できるオプションは使用するドライバーによって異なります。各ドライバーで利用できるオプションについて詳しくは、[Unstorageのドキュメント](https://unstorage.unjs.io/drivers)を参照してください。
+
+```js title="astro.config.mjs" ins={6-8}
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  session: {
+    driver: "redis",
+    options: {
+      url: process.env.REDIS_URL
+    },
+  }
+});
+```
+
+### session.cookie
+
+<p>
+
+**型:** `string | AstroCookieSetOptions | undefined`<br />
+**デフォルト:** `{ name: "astro-session", sameSite: "lax", httpOnly: true, secure: true }`<br />
+<Since v="5.7.0" />
+</p>
+
+セッションCookieの設定です。文字列を指定すると、Cookie名として使用されます。
+または、追加のオプションを持つオブジェクトを渡せます。これらはデフォルト値と統合されます。
+
+```js title="astro.config.mjs" ins={5-6}
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  session: {
+    // 文字列を指定するとCookie名として使用されます。
+    cookie: "my-session-cookie",
+  }
+});
+```
+
+```js title="astro.config.mjs" ins={5-10}
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  session: {
+    // オブジェクトを指定するとCookieオプションとして使用されます。
+    cookie: {
+      name: "my-session-cookie",
+      sameSite: "lax",
+      secure: true,
+    }
+  }
+});
+```
+
+### session.ttl
+
+<p>
+
+**型:** `number | undefined`<br />
+**デフォルト:** {Infinity}<br />
+<Since v="5.7.0" />
+</p>
+
+セッション値に対する任意のデフォルト有効期間を秒単位で指定します。
+
+デフォルトでは、セッション値は削除されるかセッションが破棄されるまで保持され、一定時間が経過しても自動的には期限切れになりません。
+`session.ttl`を設定すると、セッション値にデフォルトの有効期間を追加できます。[`session.set()`](/ja/reference/api-reference/#sessionset)へ`ttl`オプションを渡すと、そのエントリーについてグローバルなデフォルト値を上書きします。
+
+```js title="astro.config.mjs" ins={5-6}
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  session: {
+    // デフォルトの有効期間を1時間（3600秒）に設定
+    ttl: 3600,
+  }
+});
+```
+:::note
+`ttl`に値を設定しても、制限時間が経過した時点でストレージから値が自動的に削除されるわけではありません。
+
+ストレージの値は、`ttl`の期間が終了した後にアクセスが試みられたときにのみ削除されます。この時点でセッション値は`undefined`になり、その後に値が削除されます。
+
+ドライバーによっては、指定した時間の経過後にセッションを自動削除する`ttl`オプションをサポートしている場合もあります。詳しくは、使用するドライバーのドキュメントを参照してください。
+:::
+
+## 開発ツールバーのオプション
+
+
+### devToolbar.enabled
+
+<p>
+
+**型:** `boolean`<br />
+**デフォルト:** `true`
+</p>
+
+Astro開発ツールバーを有効にするかどうかを指定します。このツールバーでは、ページのアイランドを調べたり、性能やアクセシビリティに関する便利な監査を確認したりできます。
+
+このオプションはプロジェクト全体に適用されます。自分の環境だけでツールバーを無効にするには`npm run astro preferences disable devToolbar`を実行します。すべてのAstroプロジェクトで無効にするには`npm run astro preferences disable devToolbar --global`を実行します。
+
+### devToolbar.placement
+
+<p>
+
+**型:** `'bottom-left' | 'bottom-center' | 'bottom-right'`<br />
+**デフォルト:** `'bottom-center'`<br />
+<Since v="5.17.0" />
+</p>
+
+画面上でのAstro開発ツールバーのデフォルト位置です。
+
+ツールバーの位置は、ツールバーの設定UIから変更できます。変更すると、ユーザー設定が`localStorage`に保存され、この設定値を上書きします。
+
+## プリフェッチのオプション
+
+<p>
+
+**型:** `boolean | object`
+</p>
+
+サイト内のリンクのプリフェッチを有効にし、ページ遷移を高速化します。
+（`<ClientRouter />`ルーターを使用するページではデフォルトで有効です。この動作を無効にするには`prefetch: false`を設定します。）
+
+この設定により、プロジェクトのすべてのページへプリフェッチスクリプトが自動的に追加され、`data-astro-prefetch`属性を使用できるようになります。
+ページ内の任意の`<a />`リンクへこの属性を追加すると、そのページのプリフェッチが有効になります。
+
+```html
+<a href="/about" data-astro-prefetch>About</a>
+```
+[`prefetch.defaultStrategy`](#prefetchdefaultstrategy)オプションと[`prefetch.prefetchAll`](#prefetchprefetchall)オプションを使用して、デフォルトのプリフェッチ動作をさらにカスタマイズできます。
+
+詳しくは、[プリフェッチガイド](/ja/guides/prefetch/)を参照してください。
+
+### prefetch.prefetchAll
+
+<p>
+
+**型:** `boolean`
+</p>
+
+`data-astro-prefetch`属性を持たないリンクを含め、すべてのリンクのプリフェッチを有効にします。
+`<ClientRouter />`ルーターを使用する場合、この値のデフォルトは`true`です。それ以外の場合、デフォルト値は`false`です。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  prefetch: {
+    prefetchAll: true,
+  },
+});
+```
+
+`true`に設定した場合、個別のリンクに`data-astro-prefetch="false"`を設定してプリフェッチを無効にできます。
+
+```html
+<a href="/about" data-astro-prefetch="false">About</a>
+```
+
+### prefetch.defaultStrategy
+
+<p>
+
+**型:** `'tap' | 'hover' | 'viewport' | 'load'`<br />
+**デフォルト:** `'hover'`
+</p>
+
+値を指定せずに`data-astro-prefetch`属性をリンクへ設定した場合に使用する、デフォルトのプリフェッチ戦略です。
+
+- `'tap'`：リンクをクリックする直前にプリフェッチします。
+- `'hover'`：リンクへカーソルを合わせるか、フォーカスしたときにプリフェッチします（デフォルト）。
+- `'viewport'`：リンクがビューポートへ入ったときにプリフェッチします。
+- `'load'`：ページの読み込み後に、ページ内のすべてのリンクをプリフェッチします。
+
+属性へ値を設定すると、個別のリンクについてこのデフォルト値を上書きし、別の戦略を選択できます。
+
+```html
+<a href="/about" data-astro-prefetch="viewport">About</a>
+```
+
+## 画像のオプション
+
+
+### image.endpoint
+
+<p>
+
+**型:** `Object`<br />
+**デフォルト:** `{route: '/_image', entrypoint: undefined}`<br />
+<Since v="3.1.0" />
+</p>
+
+開発時とSSRで画像最適化に使用するエンドポイントを設定します。`entrypoint`プロパティを`undefined`に設定すると、デフォルトの画像エンドポイントを使用します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  image: {
+    // 例：`/custom_endpoint`で独自の画像エンドポイントを使用
+    endpoint: {
+      route: '/custom_endpoint',
+      entrypoint: 'src/my_endpoint.ts',
+    },
+  },
+});
+```
+
+### image.service
+
+<p>
+
+**型:** `Object`<br />
+**デフォルト:** `{entrypoint: 'astro/assets/services/sharp', config?: {}}`<br />
+<Since v="2.1.0" />
+</p>
+
+Astroのアセットサポートで使用する画像サービスを設定します。
+
+値には、使用する画像サービスのエントリーポイントと、必要に応じてサービスへ渡す設定オブジェクトを持つオブジェクトを指定します。
+
+サービスのエントリーポイントには、組み込みサービスまたはサードパーティ製パッケージを指定できます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  image: {
+    // 例：独自の設定でSharpベースの画像サービスを有効化
+    service: {
+      entrypoint: 'astro/assets/services/sharp',
+      config: {
+        limitInputPixels: false,
+        webp: {
+          effort: 6,
+          alphaQuality: 80,
+        },
+        jpeg: {
+          mozjpeg: true,
+        },
+      },
+    },
+  },
+});
+```
+
+#### image.service.config.limitInputPixels
+
+<p>
+
+**型:** `number | boolean`<br />
+**デフォルト:** `true`<br />
+<Since v="4.1.0" />
+</p>
+
+Sharp画像サービスが処理する画像のサイズを制限するかどうかを指定します。
+
+`false`に設定すると、Sharp画像サービスのデフォルト画像サイズ制限を回避し、大きな画像を処理できます。
+
+#### image.service.config.kernel
+
+<p>
+
+**型:** `string | undefined`<br />
+**デフォルト:** `undefined`<br />
+<Since v="5.17.0" />
+</p>
+
+Sharp画像サービスで[画像のサイズ変更に使用するカーネル](https://sharp.pixelplumbing.com/api-resize/#resize)のデフォルト値です。
+
+デフォルトでは`undefined`で、Sharpのデフォルトカーネル`lanczos3`に対応します。
+
+#### image.service.config.jpeg
+
+<p>
+
+**型:** `Record<string, any> | undefined`<br />
+**デフォルト:** `undefined`<br />
+<Since v="6.1.0" />
+</p>
+
+Astro組み込みのSharp画像サービスを使用する際に`sharp().jpeg()`へ渡す、デフォルトのエンコーダーオプションです。
+
+`mozjpeg`、`progressive`、`chromaSubsampling`、デフォルトの`quality`などのオプションに使用できます。
+`<Image />`、`<Picture />`、`getImage()`で画像ごとに指定した`quality`の値が引き続き優先されます。
+
+#### image.service.config.webp
+
+<p>
+
+**型:** `Record<string, any> | undefined`<br />
+**デフォルト:** `undefined`<br />
+<Since v="6.1.0" />
+</p>
+
+Astro組み込みのSharp画像サービスを使用する際に`sharp().webp()`へ渡す、デフォルトのエンコーダーオプションです。
+
+`effort`、`alphaQuality`、`lossless`、`nearLossless`、デフォルトの`quality`などのオプションに使用できます。
+`<Image />`、`<Picture />`、`getImage()`で画像ごとに指定した`quality`の値が引き続き優先されます。
+
+#### image.service.config.avif
+
+<p>
+
+**型:** `Record<string, any> | undefined`<br />
+**デフォルト:** `undefined`<br />
+<Since v="6.1.0" />
+</p>
+
+Astro組み込みのSharp画像サービスを使用する際に`sharp().avif()`へ渡す、デフォルトのエンコーダーオプションです。
+
+`effort`、`chromaSubsampling`、`bitdepth`、`lossless`、デフォルトの`quality`などのオプションに使用できます。
+`<Image />`、`<Picture />`、`getImage()`で画像ごとに指定した`quality`の値が引き続き優先されます。
+
+#### image.service.config.png
+
+<p>
+
+**型:** `Record<string, any> | undefined`<br />
+**デフォルト:** `undefined`<br />
+<Since v="6.1.0" />
+</p>
+
+Astro組み込みのSharp画像サービスを使用する際に`sharp().png()`へ渡す、デフォルトのエンコーダーオプションです。
+
+`compressionLevel`、`effort`、`palette`、デフォルトの`quality`などのオプションに使用できます。
+`<Image />`、`<Picture />`、`getImage()`で画像ごとに指定した`quality`の値が引き続き優先されます。
+
+### image.dangerouslyProcessSVG
+
+<p>
+
+**型:** `boolean`<br />
+**デフォルト:** `false`<br />
+<Since v="6.3.0" />
+</p>
+
+SVGソース画像を画像最適化パイプラインで処理できるようにします。
+
+特殊な形式のSVGは処理コストが非常に高くなり、攻撃者によるサービス拒否攻撃に利用される可能性があるため、デフォルトでは無効です。SVG画像の出所を信頼し、処理のリスクを理解している場合にのみ、このオプションを有効にしてください。
+
+### image.domains
+
+<p>
+
+**型:** `Array<string>`<br />
+**デフォルト:** `[]`<br />
+<Since v="2.10.10" />
+</p>
+
+リモート画像の最適化で許可する画像ソースドメインの一覧を定義します。それ以外のリモート画像はAstroによって最適化されません。
+
+このオプションには、個々のドメイン名を文字列として含む配列が必要です。ワイルドカードは使用できません。代わりに、[`image.remotePatterns`](#imageremotepatterns)を使用して、許可するソースURLパターンの一覧を定義します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  image: {
+    // 例：単一ドメインからのリモート画像最適化を許可
+    domains: ['astro.build'],
+  },
+});
+```
+
+### image.remotePatterns
+
+<p>
+
+**型:** `Array<RemotePattern>`<br />
+**デフォルト:** `[]`<br />
+<Since v="2.10.10" />
+</p>
+
+リモート画像の最適化で許可する画像ソースURLパターンの一覧を定義します。
+
+`remotePatterns`には次の4つのプロパティを設定できます。
+1. protocol
+2. hostname
+3. port
+4. pathname
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  image: {
+    // 例：AWS S3バケットのすべての画像の処理を許可
+    remotePatterns: [{
+      protocol: 'https',
+      hostname: '**.amazonaws.com',
+    }],
+  },
+});
+```
+
+次のようにワイルドカードを使用して、許可する`hostname`と`pathname`の値を定義できます。ワイルドカードを使用しない場合は、指定した値との完全一致だけが設定されます。
+
+`hostname`パターン：
+  - `**.`で始めると、すべてのサブドメインを許可します（`endsWith`と同様）。
+  - `*.`で始めると、1階層のサブドメインだけを許可します。
+
+`pathname`パターン：
+  - `/**`で終えると、すべてのサブルートを許可します（`startsWith`と同様）。
+  - `/*`で終えると、1階層のサブルートだけを許可します。
+
+画像URLがリモートパターンに一致する場合、HTTPリダイレクトも追跡されます。最終的なリダイレクト先URLが許可されたリモートパターンに含まれていなければ、画像は読み込まれません。
+
+### image.responsiveStyles
+
+<p>
+
+**型:** `boolean`<br />
+**デフォルト:** `false`<br />
+<Since v="5.10.0" />
+</p>
+
+レスポンシブ画像用のグローバルスタイルを自動的に追加するかどうかを指定します。画像を自分でスタイリングする場合を除き、このオプションを有効にしてください。
+
+このオプションは、設定または画像コンポーネントの`layout`プロパティで`layout`が`constrained`、`full-width`、`fixed`のいずれかに設定されている場合にのみ使用されます。
+
+詳しくは、[画像のドキュメント](/ja/guides/images/#responsive-image-styles)を参照してください。
+
+### image.layout
+
+<p>
+
+**型:** `ImageLayout`<br />
+**デフォルト:** `undefined`<br />
+<Since v="5.10.0" />
+</p>
+
+レスポンシブ画像のデフォルトレイアウト形式です。画像コンポーネントの`layout`プロパティで上書きできます。
+- `constrained` - アスペクト比を維持したままコンテナーに収まるよう拡大縮小しますが、指定した寸法を超えません。
+- `fixed` - 元の寸法を維持します。
+- `full-width` - アスペクト比を維持したままコンテナーに収まるよう拡大縮小します。
+
+詳しくは、[コンポーネントの`layout`プロパティ](/ja/reference/modules/astro-assets/#layout)を参照してください。
+
+### image.objectFit
+
+<p>
+
+**型:** `ImageFit`<br />
+**デフォルト:** `"cover"`<br />
+<Since v="5.10.0" />
+</p>
+
+レスポンシブ画像の[`object-fit` CSSプロパティ値](https://developer.mozilla.org/ja/docs/Web/CSS/object-fit)です。画像コンポーネントの`fit`プロパティで上書きできます。
+`layout`に値を設定する必要があります。
+
+詳しくは、[コンポーネントの`fit`プロパティ](/ja/reference/modules/astro-assets/#fit)を参照してください。
+
+### image.objectPosition
+
+<p>
+
+**型:** `string`<br />
+**デフォルト:** `"center"`<br />
+<Since v="5.10.0" />
+</p>
+
+レスポンシブ画像のデフォルトの[`object-position` CSSプロパティ値](https://developer.mozilla.org/ja/docs/Web/CSS/object-position)です。画像コンポーネントの`position`プロパティで上書きできます。
+`layout`に値を設定する必要があります。
+
+詳しくは、[コンポーネントの`position`プロパティ](/ja/reference/modules/astro-assets/#position)を参照してください。
+
+### image.breakpoints
+
+<p>
+
+**型:** `Array<number>`<br />
+**デフォルト:** `[640, 750, 828, 1080, 1280, 1668, 2048, 2560] | [640, 750, 828, 960, 1080, 1280, 1668, 1920, 2048, 2560, 3200, 3840, 4480, 5120, 6016]`<br />
+<Since v="5.10.0" />
+</p>
+
+レスポンシブ画像の生成に使用するブレークポイントです。`layout`に値を設定する必要があります。通常は一覧全体を使用せず、ソースと出力サイズに応じて絞り込まれます。使用するデフォルト値は、画像サービスがローカルかリモートかによって異なります。リモートサービスでは必要なサイズだけが生成されるため、より包括的な一覧を使用します。ローカルサービスでは生成する画像数を減らすため、短い一覧を使用します。
+
+## Markdownのオプション
+
+
+### markdown.shikiConfig
+
+<p>
+
+**型:** `Partial<ShikiConfig>`
+</p>
+
+Shikiはデフォルトのシンタックスハイライターです。すべてのオプションを`markdown.shikiConfig`オブジェクトで設定できます。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  markdown: {
+    shikiConfig: {
+      // Shikiの組み込みテーマから選択（または独自テーマを追加）
+      // https://shiki.style/themes
+      theme: 'dracula',
+      // または複数のテーマを指定
+      // ライト・ダークの両テーマを使用する方法は以下の注記を参照
+      themes: {
+        light: 'github-light',
+        dark: 'github-dark',
+      },
+      // デフォルトの色を無効化
+      // https://shiki.style/guide/dual-themes#without-default-color
+      // （v4.12.0で追加）
+      defaultColor: false,
+      // 独自の言語を追加
+      // 注：Shikiには.astroを含む多数の言語が組み込まれています。
+      // https://shiki.style/languages
+      langs: [],
+      // 言語に独自のエイリアスを追加
+      // エイリアスをShikiの言語IDへ対応付け：https://shiki.style/languages#bundled-languages
+      // https://shiki.style/guide/load-lang#custom-language-aliases
+      langAlias: {
+        cjs: "javascript"
+      },
+      // 行の折り返しを有効にして横スクロールを防止
+      wrap: true,
+      // 独自のトランスフォーマーを追加：https://shiki.style/guide/transformers
+      // 一般的なトランスフォーマー：https://shiki.style/packages/transformers
+      transformers: [],
+    },
+  },
+});
+```
+
+使用方法と例については、[コードのシンタックスハイライトガイド](/ja/guides/syntax-highlighting/)を参照してください。
+
+### markdown.syntaxHighlight
+
+<p>
+
+**型:** `SyntaxHighlightConfig | SyntaxHighlightConfigType | false`<br />
+**デフォルト:** `{ type: 'shiki', excludeLangs: ['math'] }`
+</p>
+
+Markdownコードブロック（\`\`\`）に使用するシンタックスハイライターを指定します。無効にすることもできます。この設定によって、AstroがMarkdownコードブロックへ適用するCSSクラスが決まります。
+
+- `shiki` - [Shiki](https://shiki.style)ハイライターを使用します（デフォルトでは`github-dark`テーマ）。
+- `prism` - [Prism](https://prismjs.com/)ハイライターを使用し、[独自のPrismスタイルシートを指定](/ja/guides/syntax-highlighting/#prismスタイルシートを追加する)します。
+- `false` - シンタックスハイライトを適用しません。
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  markdown: {
+    // 例：MarkdownのシンタックスハイライトをPrismへ切り替え
+    syntaxHighlight: 'prism',
+  }
+});
+```
+
+シンタックスハイライトをより細かく制御するには、代わりに次のプロパティを持つ設定オブジェクトを指定できます。
+
+#### markdown.syntaxHighlight.type
+
+<p>
+
+**型:** `'shiki' | 'prism'`<br />
+**デフォルト:** `'shiki'`<br />
+<Since v="5.5.0" />
+</p>
+
+Markdownコードブロックへ適用するデフォルトのCSSクラスです。
+（ほかのシンタックスハイライト設定が不要な場合は、代わりに`markdown.syntaxHighlight`へ`shiki`、`prism`、`false`のいずれかを直接設定できます。）
+
+#### markdown.syntaxHighlight.excludeLangs
+
+<p>
+
+**型:** `Array<string>`<br />
+**デフォルト:** `['math']`<br />
+<Since v="5.5.0" />
+</p>
+
+`markdown.syntaxHighlight.type`で指定したデフォルトのシンタックスハイライトから除外する言語の配列です。
+Mermaid.jsやD2など、Markdownコードブロックから図を作成するツールを使用する場合に便利です。
+
+```js title="astro.config.mjs"
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  markdown: {
+    syntaxHighlight: {
+      type: 'shiki',
+      excludeLangs: ['mermaid', 'math'],
+    },
+  },
+});
+```
+
+### markdown.remarkPlugins
+
+
+:::caution[非推奨]
+このプロパティは非推奨であり、将来のメジャーバージョンで削除されます。代わりに、設定した[`markdown.processor`](#markdownprocessor)へプラグインを渡してください。
+
+Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[プラグインの使用](/ja/guides/markdown-content/#remarkおよびrehypeプラグインの利用)について確認できます。
+:::
+
+<p>
+
+**型:** `RemarkPlugins`
+</p>
+
+[remarkプラグイン](https://github.com/remarkjs/remark)を渡して、Markdownのビルド方法をカスタマイズします。プラグイン関数をインポートして適用する方法（推奨）と、プラグイン名を文字列として渡す方法があります。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import remarkToc from 'remark-toc';
+
+export default defineConfig({
+  markdown: {
+    remarkPlugins: [ [remarkToc, { heading: "contents"} ] ]
+  }
+});
+```
+
+### markdown.rehypePlugins
+
+
+:::caution[非推奨]
+このプロパティは非推奨であり、将来のメジャーバージョンで削除されます。代わりに、設定した[`markdown.processor`](#markdownprocessor)へプラグインを渡してください。
+
+Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[プラグインの使用](/ja/guides/markdown-content/#remarkおよびrehypeプラグインの利用)について確認できます。
+:::
+
+<p>
+
+**型:** `RehypePlugins`
+</p>
+
+[rehypeプラグイン](https://github.com/remarkjs/remark-rehype)を渡して、Markdownが出力するHTMLの処理方法をカスタマイズします。プラグイン関数をインポートして適用する方法（推奨）と、プラグイン名を文字列として渡す方法があります。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import { rehypeAccessibleEmojis } from 'rehype-accessible-emojis';
+
+export default defineConfig({
+  markdown: {
+    rehypePlugins: [rehypeAccessibleEmojis]
+  }
+});
+```
+
+### markdown.gfm
+
+
+:::caution[非推奨]
+このプロパティは非推奨であり、将来のメジャーバージョンで削除されます。代わりに、設定した[`markdown.processor`](#markdownprocessor)へ`gfm`を渡してください。
+
+Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[GitHub Flavored Markdownの使用](/ja/guides/markdown-content/#sätteriプラグインと機能の利用)について確認できます。
+:::
+
+<p>
+
+**型:** `boolean`<br />
+**デフォルト:** `true`<br />
+<Since v="2.0.0" />
+</p>
+
+Astroはデフォルトで[GitHub Flavored Markdown](https://github.com/remarkjs/remark-gfm)を使用します。無効にするには、`gfm`フラグを`false`に設定します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  markdown: {
+    gfm: false,
+  }
+});
+```
+
+### markdown.smartypants
+
+
+:::caution[非推奨]
+このプロパティは非推奨であり、将来のメジャーバージョンで削除されます。代わりに、設定した[`markdown.processor`](#markdownprocessor)へ渡してください。`unified()`では`smartypants`を、`satteri()`では`smartPunctuation`を使用します。
+
+Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[スマート句読点の使用](/ja/guides/markdown-content/#sätteriプラグインと機能の利用)について確認できます。
+:::
+
+<p>
+
+**型:** `boolean | Smartypants`<br />
+**デフォルト:** `true`<br />
+<Since v="2.0.0" />
+</p>
+
+[SmartyPantsフォーマッター](https://daringfireball.net/projects/smartypants/)を使用して、直線形引用符を曲線形引用符へ、ハイフンをenダッシュやemダッシュへ、3つのピリオドを省略記号へ変換するかどうかを指定します。
+
+無効にするには、`smartypants`フラグを`false`に設定します。
+
+タイポグラフィをより細かく制御するには、代わりに[`retext-smartypants`がサポートするプロパティ](https://github.com/retextjs/retext-smartypants?tab=readme-ov-file#fields)を持つ設定オブジェクトを指定できます。
+
+### markdown.remarkRehype
+
+
+:::caution[非推奨]
+このプロパティは非推奨であり、将来のメジャーバージョンで削除されます。
+
+脚注を設定するには、代わりに`unified()`プロセッサーへ`remarkRehype`を、または`satteri()`プロセッサーへ`gfm.footnotes`を渡します。その他の`remark-rehype`オプションは、`unified()`を使用する場合にのみサポートされます。
+
+Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[組み込み機能の使用](/ja/guides/markdown-content/#sätteriプラグインと機能の利用)について確認できます。
+:::
+
+<p>
+
+**型:** `RemarkRehype`
+</p>
+
+[remark-rehype](https://github.com/remarkjs/remark-rehype#api)へオプションを渡します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  markdown: {
+    // 例：脚注のテキストを別の言語へ翻訳（ここではデフォルトの英語値）
+    remarkRehype: { footnoteLabel: "Footnotes", footnoteBackLabel: "Back to reference 1"},
+  },
+});
+```
+
+### markdown.processor
+
+<p>
+
+**型:** `MarkdownProcessor`<br />
+<Since v="6.4.0" />
+</p>
+
+`.md`ファイルのレンダリングに使用する[Markdownプロセッサー](/ja/guides/markdown-content/#markdownプロセッサの選択)を設定します。
+
+AstroネイティブのMarkdownパイプラインであるSätteriがデフォルトのプロセッサーです。設定するには、`@astrojs/markdown-satteri`をインストールし、`satteri()`へオプションを渡します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import { satteri } from '@astrojs/markdown-satteri';
+
+export default defineConfig({
+  markdown: {
+    processor: satteri({
+      features: { gfm: false },
+    }),
+  },
+});
+```
+
+remark/rehypeパイプラインを維持するには、`@astrojs/markdown-remark`をインストールし、`unified()`を渡します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
+import remarkToc from 'remark-toc';
+
+export default defineConfig({
+  markdown: {
+    processor: unified({
+      remarkPlugins: [remarkToc],
+    }),
+  },
+});
+```
+
+公式のMarkdownプロセッサーと選び方について詳しくは、Markdownガイドの[Markdownプロセッサーの選択](/ja/guides/markdown-content/#markdownプロセッサの選択)を参照してください。
+
+## i18n
+
+<p>
+
+**型:** `object`<br />
+<Since v="3.5.0" />
+</p>
+
+i18nルーティングを設定し、いくつかのカスタマイズオプションを指定できます。
+
+Astroの国際化について詳しくは、[国際化ガイド](/ja/guides/internationalization/)を参照してください。
+
+### i18n.locales
+
+<p>
+
+**型:** `Locales`<br />
+<Since v="3.5.0" />
+</p>
+
+Webサイトがサポートするすべてのロケールの一覧です。このフィールドは必須です。
+
+言語は個別のコード（`['en', 'es', 'pt-br']`など）として一覧にするか、複数のコードを共通の`path`（`{ path: "english", codes: ["en", "en-US"]}`など）へ対応付けられます。これらのコードは、デプロイされたサイトのURL構造を決めるために使用されます。
+
+特定の言語コード形式や構文は強制されませんが、コンテンツファイルを含むプロジェクトフォルダーは`locales`一覧の項目と完全に一致する必要があります。複数の`codes`が独自のURLパスプレフィックスを指す場合は、設定した`path`と同じ名前のフォルダーへコンテンツファイルを保存します。
+
+### i18n.defaultLocale
+
+<p>
+
+**型:** `string`<br />
+<Since v="3.5.0" />
+</p>
+
+Webサイトまたはアプリケーションのデフォルトロケールです。指定した`locales`のいずれかである必要があります。このフィールドは必須です。
+
+特定の言語形式や構文は強制されませんが、互換性を最大限に高めるため、小文字と必要に応じてハイフンを使用すること（「es」、「pt-br」など）を推奨します。
+
+### i18n.fallback
+
+<p>
+
+**型:** `Record<string, string>`<br />
+<Since v="3.5.0" />
+</p>
+
+存在しないページ（翻訳ページがまだ作成されていない場合など）へ移動したときのフォールバック戦略です。
+
+このオブジェクトを使用して、サポートする各言語のフォールバック`locale`ルートを宣言します。フォールバックを指定しない場合、利用できないページは404を返します。
+
+##### 例
+
+次の例では、`/pt-br/`で利用できないページを`es`版へ、`/fr/`で利用できないページを`en`版へリダイレクトするコンテンツフォールバック戦略を設定します。利用できない`/es/`ページは404を返します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "fr", "pt-br", "es"],
+    fallback: {
+      "pt-br": "es",
+      fr: "en"
+    }
+  }
+});
+```
+
+### i18n.routing
+
+<p>
+
+**Type:** `object | "manual"`<br />
+**Default:** `object`<br />
+<Since v="3.7.0" />
+</p>
+
+サイトURLを決定するルーティング戦略を制御します。デフォルト言語のフォルダーやURLパスの構成に合わせて設定してください。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "fr"],
+    routing: {
+      prefixDefaultLocale: false,
+      redirectToDefaultLocale: true,
+      fallbackType: "redirect",
+    }
+  }
+});
+```
+
+Astro 4.6.0以降では、このオプションに`manual`も設定できます。このルーティング戦略を有効にすると、Astroのi18nミドルウェアが**無効**になり、ほかの`routing`オプション（`prefixDefaultLocale`など）は設定できません。独自のルーティングロジックを記述するか、独自のミドルウェアとともにAstroのi18nミドルウェアを手動で実行する必要があります。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "fr"],
+    routing: "manual"
+  }
+});
+```
+
+#### i18n.routing.prefixDefaultLocale
+
+<p>
+
+**Type:** `boolean`<br />
+**Default:** `false`<br />
+<Since v="3.7.0" />
+</p>
+
+`false`の場合、デフォルト以外の言語だけに言語プレフィックスが表示されます。
+`defaultLocale`には言語プレフィックスが表示されず、コンテンツファイルはローカライズされたフォルダーには配置されません。
+デフォルト以外の言語ではURLが`example.com/[locale]/content/`形式になりますが、デフォルトロケールでは`example.com/content/`になります。
+
+`true`の場合、すべてのURLに言語プレフィックスが表示されます。
+デフォルト言語を含むすべてのルートで、URLが`example.com/[locale]/content/`形式になります。
+デフォルト言語を含むすべての言語で、ローカライズされたフォルダーが使用されます。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "fr", "pt-br", "es"],
+    routing: {
+      prefixDefaultLocale: true,
+    }
+  }
+});
+```
+
+#### i18n.routing.redirectToDefaultLocale
+
+<p>
+
+**Type:** `boolean`<br />
+**Default:** `false`<br />
+<Since v="4.2.0" />
+</p>
+
+`prefixDefaultLocale: true`が設定されている場合に、`src/pages/index.astro`が生成するホームURL（`/`）を`/[defaultLocale]`へリダイレクトするかどうかを設定します。
+
+サイトのルートでこの自動リダイレクトを有効にするには、`redirectToDefaultLocale: true`を設定します。
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  i18n:{
+    defaultLocale: "en",
+    locales: ["en", "fr"],
+    routing: {
+      prefixDefaultLocale: true,
+      redirectToDefaultLocale: true
+    }
+  }
+});
+```
+
+#### i18n.routing.fallbackType
+
+<p>
+
+**Type:** `"redirect" | "rewrite"`<br />
+**Default:** `"redirect"`<br />
+<Since v="4.15.0" />
+</p>
+
+存在しないページルートで404ページを表示しないように[`i18n.fallback`](#i18nfallback)を設定している場合、このオプションはフォールバックページへ[リダイレクト](/ja/guides/routing/#redirects)するか、フォールバックページのコンテンツをその場で[書き換える](/ja/guides/routing/#rewrites)かを制御します。
+
+デフォルトでは、Astroのi18nルーティングはフォールバック設定にもとづいて、訪問者を新しい移動先へリダイレクトするページを作成します。ブラウザは再読み込みされ、URLバーに移動先のアドレスが表示されます。
+
+`i18n.routing.fallback: "rewrite"`を設定すると、Astroはリクエストされた元のURLでフォールバックページの内容をレンダリングするページを作成します。
+
+次の設定で、`src/pages/en/about.astro`ファイルはあるものの`src/pages/fr/about.astro`ファイルがない場合、`astro build`コマンドは`dist/en/about.html`ページと同じ内容の`dist/fr/about.html`を生成します。
+サイトの訪問者には`https://example.com/fr/about/`で英語版のページが表示され、リダイレクトは行われません。
+
+```js
+//astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "fr"],
+    routing: {
+      prefixDefaultLocale: false,
+      fallbackType: "rewrite",
+    },
+    fallback: {
+      fr: "en",
+    }
+  },
+});
+```
+
+### i18n.domains
+
+<p>
+
+**Type:** `Record<string, string>`<br />
+**Default:** `{}`<br />
+<Since v="4.3.0" />
+</p>
+
+サポートする1つ以上の言語で独自ドメイン（またはサブドメイン）を使用するよう、URLパターンを設定します。
+
+ロケールをドメインに対応づけると、`/[locale]/`パスプレフィックスは使用されません。
+ただし、設定した`defaultLocale`を含め、`src/pages/`内のローカライズされたフォルダーは引き続き必要です。
+
+設定されていないほかのロケールでは、`prefixDefaultLocale`戦略に従い、デフォルトでローカライズされたパスベースのURL（例：`https://example.com/[locale]/blog`）が使用されます。
+
+```js
+//astro.config.mjs
+export default defineConfig({
+  site: "https://example.com",
+  output: "server", // required, with no prerendered pages
+  adapter: node({
+    mode: 'standalone',
+  }),
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "fr", "pt-br", "es"],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+    domains: {
+      fr: "https://fr.example.com",
+      es: "https://example.es"
+    }
+  },
+});
+```
+
+構築されるページルートと、`astro:i18n`ヘルパー関数[`getAbsoluteLocaleUrl()`](/ja/reference/modules/astro-i18n/#getabsolutelocaleurl)および[`getAbsoluteLocaleUrlList()`](/ja/reference/modules/astro-i18n/#getabsolutelocaleurllist)が返すURLは、どちらも`i18n.domains`に設定されたオプションを使用します。
+
+この機能の制限など、詳しくは[国際化ガイド](/ja/guides/internationalization/#domains)を参照してください。
+
+## env
+
+<p>
+
+**Type:** `object`<br />
+**Default:** `{}`<br />
+<Since v="5.0.0" />
+</p>
+
+型安全な環境変数の設定オプションです。
+
+[Astroの環境変数](/ja/guides/environment-variables/)について詳しくは、ガイドを参照してください。
+
+### env.schema
+
+<p>
+
+**Type:** `EnvSchema`<br />
+**Default:** `{}`<br />
+<Since v="5.0.0" />
+</p>
+
+Zodによる検証を適用し、TypeScriptのサポート（自動補完や型安全性など）を利用する環境変数を定義します。各キーは変数名に対応し、値には[`envField`で定義](/ja/reference/modules/astro-config/#envfield)したデータ型と検証を指定します。
+
+文字列、数値、列挙型、真偽値の4つのデータ型がサポートされています。各型には`context`（クライアントまたはサーバー）、`access`レベル（公開またはシークレット）、さらに`default`値や変数が`optional`かどうか（デフォルトは`false`）などの検証を指定する必要があります。
+
+```js
+// astro.config.mjs
+import { defineConfig, envField } from "astro/config"
+
+export default defineConfig({
+  env: {
+    schema: {
+      API_URL: envField.string({ context: "client", access: "public", optional: true }),
+      PORT: envField.number({ context: "server", access: "public", default: 4321 }),
+      API_SECRET: envField.string({ context: "server", access: "secret" }),
+    }
+  }
+});
+```
+
+### env.validateSecrets
+
+<p>
+
+**Type:** `boolean`<br />
+**Default:** `false`<br />
+<Since v="5.0.0" />
+</p>
+
+開発サーバーの起動時またはビルドの実行時に、サーバー上でシークレットを検証するかどうかを指定します。
+
+デフォルトでは、開発サーバーまたはビルドの開始時にサーバー上で検証されるのは公開変数だけで、非公開変数は実行時にのみ検証されます。有効にすると、非公開変数も起動時に確認されます。これは一部のCIパイプラインで、デプロイ前にすべてのシークレットが正しく設定されていることを確認する場合に役立ちます。
+
+```js
+// astro.config.mjs
+import { defineConfig, envField } from "astro/config"
+
+export default defineConfig({
+  env: {
+    schema: {
+      // ...
+    },
+    validateSecrets: true
+  }
+});
+```
+
+## fonts
+
+<p>
+
+**Type:** `Array<FontFamily>`<br />
+**Default:** `[]`<br />
+<Since v="6.0.0" />
+</p>
+
+フォントを設定し、フォントごとにカスタマイズオプションを指定できます。
+
+[Astroでのカスタムフォントの使用](/ja/guides/fonts/)について詳しくは、ガイドを参照してください。
+
+### font.provider
+
+<p>
+
+**Type:** `FontProvider`<br />
+<Since v="6.0.0" />
+</p>
+
+フォントファイルの提供元です。[組み込みプロバイダー](/ja/reference/font-provider-reference/#built-in-providers)を使用するか、独自の[カスタムプロバイダー](/ja/reference/font-provider-reference/#building-a-font-provider)を作成できます。
+
+```js
+// astro.config.mjs
+import { defineConfig, fontProviders } from "astro/config";
+
+export default defineConfig({
+  fonts: [{
+    provider: fontProviders.google(),
+    name: "Roboto",
+    cssVariable: "--font-roboto"
+  }]
+});
+```
+
+### font.name
+
+<p>
+
+**Type:** `string`<br />
+<Since v="6.0.0" />
+</p>
+
+フォントプロバイダーで識別されるフォントファミリー名です。
+
+```js
+name: "Roboto"
+```
+
+### font.cssVariable
+
+<p>
+
+**Type:** `string`<br />
+<Since v="6.0.0" />
+</p>
+
+CSS変数（つまり`--`で始まる形式）として指定する、有効な[識別子](https://developer.mozilla.org/ja/docs/Web/CSS/ident)です。
+
+```js
+cssVariable: "--font-roboto"
+```
+
+### font.fallbacks
+
+<p>
+
+**Type:** `Array<string>`<br />
+**Default:** `["sans-serif"]`<br />
+<Since v="6.0.0" />
+</p>
+
+選択したフォントが利用できないか読み込み中の場合に使用するフォントの配列です。フォールバックフォントは記載順に選択され、最初に利用できるフォントが使用されます。
+
+```js
+fallbacks: ["CustomFont", "serif"]
+```
+
+フォールバックフォントを完全に無効にするには、空の配列を設定します。
+
+```js
+fallbacks: []
+```
+
+少なくとも、フォントの意図する外観に合った[総称ファミリー名](https://developer.mozilla.org/ja/docs/Web/CSS/font-family#generic-name)を指定してください。Astroはフォントメトリクスを使用して[最適化されたフォールバック](https://developer.chrome.com/blog/font-fallbacks)の生成を試みます。この最適化を無効にするには、`optimizedFallbacks`を`false`に設定します。
+
+### font.optimizedFallbacks
+
+<p>
+
+**Type:** `boolean`<br />
+**Default:** `true`<br />
+<Since v="6.0.0" />
+</p>
+
+フォールバックフォントの生成時にAstroのデフォルトの最適化を有効にするかどうかを指定します。[`fallbacks`](#fontfallbacks)の生成方法を完全に制御するには、このデフォルトの最適化を無効にできます。
+
+```js
+optimizedFallbacks: false
+```
+
+### font.weights
+
+<p>
+
+**Type:** `Array<(number|string)>`<br />
+**Default:** `[400]`<br />
+<Since v="6.0.0" />
+</p>
+
+[フォントの太さ](https://developer.mozilla.org/ja/docs/Web/CSS/font-weight)の配列です。設定で値を指定しない場合、不要なダウンロードを防ぐため、デフォルトでは太さ`400`だけが含まれます。ほかのフォントの太さを利用するには、このプロパティを指定する必要があります。
+
+```js
+weights: [200, "400", "bold"]
+```
+
+対象のフォントが[可変フォント](https://developer.mozilla.org/ja/docs/Web/CSS/CSS_fonts/Variable_fonts_guide)の場合、太さの範囲を指定できます。
+
+```js
+weights: ["100 900"]
+```
+
+### font.styles
+
+<p>
+
+**Type:** `Array<("normal"|"italic"|"oblique")>`<br />
+**Default:** `["normal", "italic"]`<br />
+<Since v="6.0.0" />
+</p>
+
+[フォントスタイル](https://developer.mozilla.org/ja/docs/Web/CSS/font-style)の配列です。
+
+```js
+styles: ["normal", "oblique"]
+```
+
+### font.subsets
+
+<p>
+
+**Type:** `Array<string>`<br />
+**Default:** `["latin"]`<br />
+<Since v="6.0.0" />
+</p>
+
+プリロードする[フォントサブセット](https://knaap.dev/posts/font-subsetting/)の一覧を定義します。
+
+```js
+subsets: ["latin"]
+```
+
+### font.formats
+
+<p>
+
+**Type:** `Array<("woff2"|"woff"|"otf"|"ttf"|"eot")>`<br />
+**Default:** `["woff2"]`<br />
+<Since v="6.0.0" />
+</p>
+
+[フォント形式](https://developer.mozilla.org/ja/docs/Web/CSS/Reference/At-rules/@font-face/src#font_formats)の配列です。
+
+```js
+formats: ["woff2", "woff"]
+```
+
+### font.options
+
+<p>
+
+**Type:** `Record<string, any>`<br />
+<Since v="6.0.0" />
+</p>
+
+プロバイダー固有のオプションを渡すオブジェクトです。フォントファミリーの[プロバイダー](#fontprovider)にもとづいて自動的に型づけされます。
+
+```js
+options: {
+  experimental: {
+    glyphs: ["a"]
+  }
+}
+```
+
+### font.display
+
+<p>
+
+**Type:** `"auto" | "block" | "swap" | "fallback" | "optional"`<br />
+**Default:** `"swap"`<br />
+<Since v="6.0.0" />
+</p>
+
+フォントがダウンロードされ、使用できるようになるタイミングにもとづいて、[フォントの表示方法](https://developer.mozilla.org/ja/docs/Web/CSS/@font-face/font-display)を定義します。
+
+```js
+display: "block"
+```
+
+### font.unicodeRange
+
+<p>
+
+**Type:** `Array<string>`<br />
+**Default:** `undefined`<br />
+<Since v="6.0.0" />
+</p>
+
+特定の[Unicode文字の範囲](https://developer.mozilla.org/ja/docs/Web/CSS/@font-face/unicode-range)にもとづいて、フォントをダウンロードして使用するタイミングを決定します。ページ上の文字が設定した範囲に一致すると、ブラウザはフォントをダウンロードし、そのフォントのすべての文字を利用できるようにします。1つのフォントでプリロードする文字のサブセットを設定するには、代わりに[`subsets`](#fontsubsets)プロパティを参照してください。
+
+これは、Webサイトの特定の部分で異なる文字体系を使用し、別のフォントで表示する場合に、ローカライズで不要なフォントのダウンロードを避けるのに役立ちます。たとえば英語版と日本語版の両方を提供するWebサイトでは、`unicodeRange`で指定した日本語の文字を含まない英語版ページで、ブラウザが日本語フォントをダウンロードするのを防げます。
+
+```js
+unicodeRange: ["U+26"]
+```
+
+### font.stretch
+
+<p>
+
+**Type:** `string`<br />
+**Default:** `undefined`<br />
+<Since v="6.0.0" />
+</p>
+
+[フォントの幅](https://developer.mozilla.org/ja/docs/Web/CSS/@font-face/font-stretch)を指定します。
+
+```js
+stretch: "condensed"
+```
+
+### font.featureSettings
+
+<p>
+
+**Type:** `string`<br />
+**Default:** `undefined`<br />
+<Since v="6.0.0" />
+</p>
+
+[タイポグラフィのフォント機能](https://developer.mozilla.org/ja/docs/Web/CSS/@font-face/font-feature-settings)（合字、スモールキャップ、スワッシュなど）を制御します。
+
+```js
+featureSettings: "'smcp' 2"
+```
+
+### font.variationSettings
+
+<p>
+
+**Type:** `string`<br />
+**Default:** `undefined`<br />
+<Since v="6.0.0" />
+</p>
+
+フォントの[バリエーション設定](https://developer.mozilla.org/ja/docs/Web/CSS/@font-face/font-variation-settings)を指定します。
+
+```js
+variationSettings: "'xhgt' 0.7"
+```
+
+## cache
+
+<p>
+
+**Type:** `object`<br />
+**Default:** `undefined`<br />
+<Since v="7.0.0" />
+</p>
+
+SSRレスポンスのルートキャッシュを有効にします。レンダリングしたページとAPIレスポンスをキャッシュするための、プラットフォームに依存しないAPIを提供します。アダプターが自動的に設定できる、差し替え可能なプロバイダーを使用します。
+
+```js
+// astro.config.mjs
+import { defineConfig, memoryCache } from 'astro/config';
+
+export default defineConfig({
+  cache: {
+    provider: memoryCache(),
+  },
+  routeRules: {
+    '/blog/[...path]': { maxAge: 300, swr: 60 },
+  },
+});
+```
+
+ルートでは`Astro.cache.set()`、ミドルウェアまたはAPIルートでは`context.cache.set()`を使用して、リクエストごとにキャッシュを制御します。
+
+### cache.provider
+
+<p>
+
+**Type:** `CacheProviderConfig`<br />
+<Since v="7.0.0" />
+</p>
+
+レスポンスのキャッシュ方法を制御するプロバイダーです。
+
+型安全な設定を利用するには、プロバイダーの設定関数を使用します。
+
+```js
+// astro.config.mjs
+import { defineConfig, memoryCache } from 'astro/config';
+
+export default defineConfig({
+  cache: { provider: memoryCache() },
+});
+```
+
+## routeRules
+
+<p>
+
+**Type:** `Record<string, RouteRule>`<br />
+**Default:** `undefined`<br />
+<Since v="7.0.0" />
+</p>
+
+キャッシュルールに対応づけるルートパターンです。
+[ファイルベースルーティング](/ja/guides/routing/#route-priority-order)と同じ`[param]`および`[...rest]`構文を使用します。
+複数のルートに一致させるには、`[...rest]`パラメーターを使用します。
+
+```js
+// astro.config.mjs
+import { defineConfig, memoryCache } from 'astro/config';
+
+export default defineConfig({
+  cache: { provider: memoryCache() },
+  routeRules: {
+    '/api/[...path]': { swr: 600 },
+    '/products/[...slug]': { maxAge: 3600, tags: ['products'] },
+  },
+});
+```
