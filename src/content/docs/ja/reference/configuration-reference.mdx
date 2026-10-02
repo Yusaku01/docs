@@ -1490,7 +1490,7 @@ export default defineConfig({
 });
 ```
 
-リクエストパイプラインのカスタマイズについて詳しくは、[高度なルーティングガイド](/ja/guides/routing/#advanced-routing)を参照してください。
+リクエストパイプラインのカスタマイズについて詳しくは、[高度なルーティングガイド](/ja/guides/routing/#高度なルーティング)を参照してください。
 
 ## ロガーのオプション
 
@@ -2498,8 +2498,8 @@ export default defineConfig({
 
 <p>
 
-**Type:** `object | "manual"`<br />
-**Default:** `object`<br />
+**型:** `object | "manual"`<br />
+**デフォルト:** `object`<br />
 <Since v="3.7.0" />
 </p>
 
@@ -2541,8 +2541,8 @@ export default defineConfig({
 
 <p>
 
-**Type:** `boolean`<br />
-**Default:** `false`<br />
+**型:** `boolean`<br />
+**デフォルト:** `false`<br />
 <Since v="3.7.0" />
 </p>
 
@@ -2573,8 +2573,8 @@ export default defineConfig({
 
 <p>
 
-**Type:** `boolean`<br />
-**Default:** `false`<br />
+**型:** `boolean`<br />
+**デフォルト:** `false`<br />
 <Since v="4.2.0" />
 </p>
 
@@ -2601,12 +2601,12 @@ export default defineConfig({
 
 <p>
 
-**Type:** `"redirect" | "rewrite"`<br />
-**Default:** `"redirect"`<br />
+**型:** `"redirect" | "rewrite"`<br />
+**デフォルト:** `"redirect"`<br />
 <Since v="4.15.0" />
 </p>
 
-存在しないページルートで404ページを表示しないように[`i18n.fallback`](#i18nfallback)を設定している場合、このオプションはフォールバックページへ[リダイレクト](/ja/guides/routing/#redirects)するか、フォールバックページのコンテンツをその場で[書き換える](/ja/guides/routing/#rewrites)かを制御します。
+存在しないページルートで404ページを表示しないように[`i18n.fallback`](#i18nfallback)を設定している場合、このオプションはフォールバックページへ[リダイレクト](/ja/guides/routing/#リダイレクト)するか、フォールバックページのコンテンツをその場で[書き換える](/ja/guides/routing/#リライト)かを制御します。
 
 デフォルトでは、Astroのi18nルーティングはフォールバック設定にもとづいて、訪問者を新しい移動先へリダイレクトするページを作成します。ブラウザは再読み込みされ、URLバーに移動先のアドレスが表示されます。
 
@@ -2638,8 +2638,8 @@ export default defineConfig({
 
 <p>
 
-**Type:** `Record<string, string>`<br />
-**Default:** `{}`<br />
+**型:** `Record<string, string>`<br />
+**デフォルト:** `{}`<br />
 <Since v="4.3.0" />
 </p>
 
@@ -2680,8 +2680,8 @@ export default defineConfig({
 
 <p>
 
-**Type:** `object`<br />
-**Default:** `{}`<br />
+**型:** `object`<br />
+**デフォルト:** `{}`<br />
 <Since v="5.0.0" />
 </p>
 
@@ -2693,8 +2693,8 @@ export default defineConfig({
 
 <p>
 
-**Type:** `EnvSchema`<br />
-**Default:** `{}`<br />
+**型:** `EnvSchema`<br />
+**デフォルト:** `{}`<br />
 <Since v="5.0.0" />
 </p>
 
@@ -2721,8 +2721,8 @@ export default defineConfig({
 
 <p>
 
-**Type:** `boolean`<br />
-**Default:** `false`<br />
+**型:** `boolean`<br />
+**デフォルト:** `false`<br />
 <Since v="5.0.0" />
 </p>
 
@@ -2748,8 +2748,8 @@ export default defineConfig({
 
 <p>
 
-**Type:** `Array<FontFamily>`<br />
-**Default:** `[]`<br />
+**型:** `Array<FontFamily>`<br />
+**デフォルト:** `[]`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2761,7 +2761,7 @@ export default defineConfig({
 
 <p>
 
-**Type:** `FontProvider`<br />
+**型:** `FontProvider`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2784,7 +2784,7 @@ export default defineConfig({
 
 <p>
 
-**Type:** `string`<br />
+**型:** `string`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2798,7 +2798,7 @@ name: "Roboto"
 
 <p>
 
-**Type:** `string`<br />
+**型:** `string`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2812,8 +2812,8 @@ cssVariable: "--font-roboto"
 
 <p>
 
-**Type:** `Array<string>`<br />
-**Default:** `["sans-serif"]`<br />
+**型:** `Array<string>`<br />
+**デフォルト:** `["sans-serif"]`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2835,8 +2835,8 @@ fallbacks: []
 
 <p>
 
-**Type:** `boolean`<br />
-**Default:** `true`<br />
+**型:** `boolean`<br />
+**デフォルト:** `true`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2850,8 +2850,8 @@ optimizedFallbacks: false
 
 <p>
 
-**Type:** `Array<(number|string)>`<br />
-**Default:** `[400]`<br />
+**型:** `Array<(number|string)>`<br />
+**デフォルト:** `[400]`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2871,8 +2871,8 @@ weights: ["100 900"]
 
 <p>
 
-**Type:** `Array<("normal"|"italic"|"oblique")>`<br />
-**Default:** `["normal", "italic"]`<br />
+**型:** `Array<("normal"|"italic"|"oblique")>`<br />
+**デフォルト:** `["normal", "italic"]`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2886,8 +2886,8 @@ styles: ["normal", "oblique"]
 
 <p>
 
-**Type:** `Array<string>`<br />
-**Default:** `["latin"]`<br />
+**型:** `Array<string>`<br />
+**デフォルト:** `["latin"]`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2901,12 +2901,12 @@ subsets: ["latin"]
 
 <p>
 
-**Type:** `Array<("woff2"|"woff"|"otf"|"ttf"|"eot")>`<br />
-**Default:** `["woff2"]`<br />
+**型:** `Array<("woff2"|"woff"|"otf"|"ttf"|"eot")>`<br />
+**デフォルト:** `["woff2"]`<br />
 <Since v="6.0.0" />
 </p>
 
-[フォント形式](https://developer.mozilla.org/ja/docs/Web/CSS/Reference/At-rules/@font-face/src#font_formats)の配列です。
+[フォント形式](https://developer.mozilla.org/ja/docs/Web/CSS/Reference/At-rules/@font-face/src#フォント形式)の配列です。
 
 ```js
 formats: ["woff2", "woff"]
@@ -2916,7 +2916,7 @@ formats: ["woff2", "woff"]
 
 <p>
 
-**Type:** `Record<string, any>`<br />
+**型:** `Record<string, any>`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2934,8 +2934,8 @@ options: {
 
 <p>
 
-**Type:** `"auto" | "block" | "swap" | "fallback" | "optional"`<br />
-**Default:** `"swap"`<br />
+**型:** `"auto" | "block" | "swap" | "fallback" | "optional"`<br />
+**デフォルト:** `"swap"`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2949,8 +2949,8 @@ display: "block"
 
 <p>
 
-**Type:** `Array<string>`<br />
-**Default:** `undefined`<br />
+**型:** `Array<string>`<br />
+**デフォルト:** `undefined`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2966,8 +2966,8 @@ unicodeRange: ["U+26"]
 
 <p>
 
-**Type:** `string`<br />
-**Default:** `undefined`<br />
+**型:** `string`<br />
+**デフォルト:** `undefined`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2981,8 +2981,8 @@ stretch: "condensed"
 
 <p>
 
-**Type:** `string`<br />
-**Default:** `undefined`<br />
+**型:** `string`<br />
+**デフォルト:** `undefined`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -2996,8 +2996,8 @@ featureSettings: "'smcp' 2"
 
 <p>
 
-**Type:** `string`<br />
-**Default:** `undefined`<br />
+**型:** `string`<br />
+**デフォルト:** `undefined`<br />
 <Since v="6.0.0" />
 </p>
 
@@ -3011,8 +3011,8 @@ variationSettings: "'xhgt' 0.7"
 
 <p>
 
-**Type:** `object`<br />
-**Default:** `undefined`<br />
+**型:** `object`<br />
+**デフォルト:** `undefined`<br />
 <Since v="7.0.0" />
 </p>
 
@@ -3038,7 +3038,7 @@ export default defineConfig({
 
 <p>
 
-**Type:** `CacheProviderConfig`<br />
+**型:** `CacheProviderConfig`<br />
 <Since v="7.0.0" />
 </p>
 
@@ -3059,13 +3059,13 @@ export default defineConfig({
 
 <p>
 
-**Type:** `Record<string, RouteRule>`<br />
-**Default:** `undefined`<br />
+**型:** `Record<string, RouteRule>`<br />
+**デフォルト:** `undefined`<br />
 <Since v="7.0.0" />
 </p>
 
 キャッシュルールに対応づけるルートパターンです。
-[ファイルベースルーティング](/ja/guides/routing/#route-priority-order)と同じ`[param]`および`[...rest]`構文を使用します。
+[ファイルベースルーティング](/ja/guides/routing/#ルーティングの優先順位)と同じ`[param]`および`[...rest]`構文を使用します。
 複数のルートに一致させるには、`[...rest]`パラメーターを使用します。
 
 ```js
