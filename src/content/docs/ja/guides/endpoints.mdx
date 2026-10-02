@@ -78,7 +78,7 @@ export function getStaticPaths() {
 }
 ```
 
-これにより、ビルド時に`/api/0.json`、`/api/1.json`、`/api/2.json`、`/api/3.json`という4つのJSONエンドポイントが生成されます。エンドポイントでの動的ルーティングは、ページの場合と同じように動作します。静的モードでは、[`getStaticPaths()`を使ってエンドポイントにpropsを渡せます](/ja/reference/routing-reference/#data-passing-with-props)。ただし、オンデマンドレンダリングでは、エンドポイントはコンポーネントではなく関数であるため、propsを渡すことはできません。
+これにより、ビルド時に`/api/0.json`、`/api/1.json`、`/api/2.json`、`/api/3.json`という4つのJSONエンドポイントが生成されます。エンドポイントでの動的ルーティングは、ページの場合と同じように動作します。静的モードでは、[`getStaticPaths()`を使ってエンドポイントにpropsを渡せます](/ja/reference/routing-reference/#propsによるデータの受け渡し)。ただし、オンデマンドレンダリングでは、エンドポイントはコンポーネントではなく関数であるため、propsを渡すことはできません。
 
 ### `request`
 
