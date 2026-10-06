@@ -215,7 +215,7 @@ Astroは、設定可能な**Markdownプロセッサ**を使ってMarkdownをレ�
 
 Astroは、[GitHub Flavored Markdown](https://github.github.com/gfm/)と[SmartyPants](https://daringfireball.net/projects/smartypants/)を自動的に適用します。これにより、テキストからクリック可能なリンクを生成したり、引用符やemダッシュをフォーマットしたりといった便利な機能が利用できます。
 
-プラグインを追加してMarkdownの処理を拡張したり、追加のパーサー機能を有効にしたり、[まったく別のプロセッサに切り替える](#unifiedプロセッサへの切り替え)こともできます。[Markdownの設定オプション](/ja/reference/configuration-reference/#markdown-options)の一覧も参照してください。
+プラグインを追加してMarkdownの処理を拡張したり、追加のパーサー機能を有効にしたり、[まったく別のプロセッサに切り替える](#unifiedプロセッサへの切り替え)こともできます。[Markdownの設定オプション](/ja/reference/configuration-reference/#markdownのオプション)の一覧も参照してください。
 
 ### Markdownプロセッサの選択
 
@@ -387,7 +387,7 @@ export default defineConfig({
 
 ### MDXからMarkdown設定を拡張する
 
-AstroのMDXインテグレーションは、デフォルトで[プロジェクトの既存のMarkdown設定](/ja/reference/configuration-reference/#markdown-options)を拡張し、[Markdownプロセッサ](#markdownプロセッサの選択)もその対象となります。個別のオプションを上書きするには、MDXの設定で同等のオプションを指定します。
+AstroのMDXインテグレーションは、デフォルトで[プロジェクトの既存のMarkdown設定](/ja/reference/configuration-reference/#markdownのオプション)を拡張し、[Markdownプロセッサ](#markdownプロセッサの選択)もその対象となります。個別のオプションを上書きするには、MDXの設定で同等のオプションを指定します。
 
 次の例では、`.mdx`ファイルに対して`.md`ファイルとは異なるシンタックスハイライターと異なるプラグインのセットを使用しています。
 
