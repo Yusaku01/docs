@@ -478,7 +478,7 @@ AstroのWebサイトでセキュリティ対策を有効にします。
 
 これらの機能は、`server`モードでオンデマンドレンダリング（SSR）されるページ、または`static`モードで事前レンダリングを無効にしたページでのみ利用できます。
 
-デフォルトでは、Astroはオンデマンドレンダリングされるページへの各リクエストについて、「origin」ヘッダーが送信先URLと一致することを自動的に確認します。`checkOrigin`を`false`に設定すると、この動作を無効にできます。
+デフォルトでは、Astroはブラウザーのリクエストメタデータを確認し、オンデマンドレンダリングされるページへのフォーム送信が同一オリジンから行われていることを確かめます。`checkOrigin`を`false`に設定すると、この動作を無効にできます。
 
 ```js
 // astro.config.mjs
@@ -501,11 +501,11 @@ export default defineConfig({
 <Since v="4.9.0" />
 </p>
 
-すべてのモダンブラウザーによって自動的に渡される「origin」ヘッダーが、各`Request`の送信先URLと一致することを確認します。これは、クロスサイトリクエストフォージェリ（CSRF）に対する保護に使用されます。
+ブラウザーが送信するヘッダーを`Request`のURLと照合し、[クロスサイトリクエストフォージェリ（CSRF）](https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/CSRF)に対する保護を提供します。モダンブラウザーでは`Sec-Fetch-Site`ヘッダーを使用し、利用できない場合は`Origin`ヘッダーへフォールバックします。
 
-「origin」の確認はオンデマンドレンダリングされるページでのみ実行されます。また、次の`content-type`ヘッダーのいずれかを持つ`POST`、`PATCH`、`DELETE`、`PUT`リクエストだけが対象です：`'application/x-www-form-urlencoded'`、`'multipart/form-data'`、`'text/plain'`。
+この確認はオンデマンドレンダリングされるページでのみ実行されます。対象は、`POST`、`PATCH`、`DELETE`、`PUT`などの安全でないリクエストのうち、`content-type`ヘッダーがないか、その値が`'application/x-www-form-urlencoded'`、`'multipart/form-data'`、`'text/plain'`のいずれかであるものに限られます。
 
-「origin」ヘッダーがリクエストの`pathname`と一致しない場合、Astroは403ステータスコードを返し、ページをレンダリングしません。
+リクエストがクロスオリジンと判定された場合、Astroは403ステータスコードを返し、ページをレンダリングしません。
 
 #### security.allowedDomains
 
