@@ -410,8 +410,8 @@ export default defineMarkdocConfig({
 
 すべてのMarkdown見出しは`Heading.astro`コンポーネントをレンダリングし、次の`attributes`をコンポーネントのプロップとして渡します。
 
-* `level: number` 見出しレベル1〜6
-* `id: string` 見出しのテキストコンテンツから生成された`id`。これは、[コンテンツ`render()`関数](/ja/guides/content-collections/)によって生成された`slug`に対応します。
+* `level: number`見出しレベル1〜6
+* `id: string`見出しのテキストコンテンツから生成された`id`。これは、[コンテンツ`render()`関数](/ja/guides/content-collections/)によって生成された`slug`に対応します。
 
 たとえば、見出し`### レベル3の見出し！`は、コンポーネントのプロップとして`level: 3`と`id: 'level-3-heading'`を渡します。
 

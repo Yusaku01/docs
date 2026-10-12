@@ -41,7 +41,7 @@ const avatarURL = await getUserAvatar(userSession);
 特に、関数はシリアライズできないため、`server:defer`が付いたコンポーネントには渡せません。循環参照を持つオブジェクトもシリアライズできません。
 
 以下のprop型がサポートされています：
-プレーンオブジェクト、`number`、`string`、`Array`、`Map`、`Set`、`RegExp`、`Date`、`BigInt`、`URL`、`Uint8Array`、`Uint16Array`、`Uint32Array`、および `Infinity`
+プレーンオブジェクト、`number`、`string`、`Array`、`Map`、`Set`、`RegExp`、`Date`、`BigInt`、`URL`、`Uint8Array`、`Uint16Array`、`Uint32Array`、および`Infinity`
 
 ## サーバーアイランドのフォールバックコンテンツ
 
@@ -122,4 +122,4 @@ Astroはサーバーアイランドに渡されるpropsを暗号化するため�
 astro create-key
 ```
 
-この値を使って`ASTRO_KEY`環境変数を設定し（例：`.env` ファイル内など）、CI/CDやホストのビルド設定にも含めてください。これにより、生成されるバンドルで常に同じキーが再利用され、暗号化と復号化の同期が保たれます。
+この値を使って`ASTRO_KEY`環境変数を設定し（例：`.env`ファイル内など）、CI/CDやホストのビルド設定にも含めてください。これにより、生成されるバンドルで常に同じキーが再利用され、暗号化と復号化の同期が保たれます。

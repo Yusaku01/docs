@@ -23,13 +23,13 @@ import ReadMore from '~/components/ReadMore.astro';
 
 ### 環境設定
 
-AstroでNeonを使用するには、Neon環境変数を設定する必要があります。プロジェクトルートで `.env` ファイルを作成または編集し、次のコードを追加して、独自のプロジェクトの詳細に置き換えます。
+AstroでNeonを使用するには、Neon環境変数を設定する必要があります。プロジェクトルートで`.env`ファイルを作成または編集し、次のコードを追加して、独自のプロジェクトの詳細に置き換えます。
 
 ```ini title=".env"
 NEON_DATABASE_URL="postgresql://<user>:<password>@<endpoint_hostname>.neon.tech:<port>/<dbname>?sslmode=require"
 ```
 
-より良いTypeScriptサポートのために、`src/env.d.ts` ファイルで環境変数を定義します。
+より良いTypeScriptサポートのために、`src/env.d.ts`ファイルで環境変数を定義します。
 
 ```typescript title="src/env.d.ts"
 interface ImportMetaEnv {
@@ -41,11 +41,11 @@ interface ImportMeta {
 }
 ```
 
-<ReadMore>Astroの[環境変数](/ja/guides/environment-variables/)と `.env` ファイルの詳細をご覧ください。</ReadMore>
+<ReadMore>Astroの[環境変数](/ja/guides/environment-variables/)と`.env`ファイルの詳細をご覧ください。</ReadMore>
 
 ### 依存関係のインストール
 
-Neonに接続するために `@neondatabase/serverless` パッケージをインストールします。
+Neonに接続するために`@neondatabase/serverless`パッケージをインストールします。
 
 ```bash
 npm install @neondatabase/serverless
@@ -53,7 +53,7 @@ npm install @neondatabase/serverless
 
 ### Neonクライアントの作成
 
-新しいファイル `src/lib/neon.ts` を作成し、次のコードでNeonクライアントを初期化します。
+新しいファイル`src/lib/neon.ts`を作成し、次のコードでNeonクライアントを初期化します。
 
 ```typescript title="src/lib/neon.ts"
 import { neon } from '@neondatabase/serverless';
@@ -63,7 +63,7 @@ export const sql = neon(import.meta.env.NEON_DATABASE_URL);
 
 ## Neon データベースへのクエリ
 
-これで、任意の `.astro` コンポーネントからNeonクライアントを使用してデータベースにクエリを実行できます。次の例では、Postgresデータベースから現在時刻を取得します。
+これで、任意の`.astro`コンポーネントからNeonクライアントを使用してデータベースにクエリを実行できます。次の例では、Postgresデータベースから現在時刻を取得します。
 
 ```astro title="src/pages/index.astro"
 ---

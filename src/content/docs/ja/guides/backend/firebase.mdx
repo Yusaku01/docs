@@ -21,14 +21,14 @@ import { FileTree } from '@astrojs/starlight/components';
 ### 前提条件
 
 - [Webアプリが設定されたFirebaseプロジェクト](https://firebase.google.com/docs/web/setup)。
-- [オンデマンドレンダリング用の `output: 'server'`](/ja/guides/on-demand-rendering/) が有効なAstroプロジェクト。
+- [オンデマンドレンダリング用の`output: 'server'`](/ja/guides/on-demand-rendering/) が有効なAstroプロジェクト。
 - Firebase認証情報。AstroをFirebaseに接続するには、2つの認証情報セットが必要です。
   - Webアプリ認証情報。これらの認証情報は、アプリのクライアント側で使用されます。Firebaseコンソールの *Project settings > General* で確認できます。**Your apps** セクションまでスクロールして、**Web app** アイコンをクリックします。
   - プロジェクト認証情報。これらの認証情報は、アプリのサーバー側で使用されます。Firebaseコンソールの *Project settings > Service accounts > Firebase Admin SDK > Generate new private key* で生成できます。
 
 ### Firebase 認証情報の追加
 
-Firebase認証情報をAstroに追加するには、プロジェクトのルートに次の変数を含む `.env` ファイルを作成します。
+Firebase認証情報をAstroに追加するには、プロジェクトのルートに次の変数を含む`.env`ファイルを作成します。
 
 ```ini title=".env"
 FIREBASE_PRIVATE_KEY_ID=YOUR_PRIVATE_KEY_ID
@@ -44,7 +44,7 @@ FIREBASE_CLIENT_CERT_URL=YOUR_CLIENT_CERT_URL
 
 これで、これらの環境変数がプロジェクトで使用できるようになります。
 
-Firebase環境変数のIntelliSenseを有効にしたい場合は、`src/` ディレクトリの `env.d.ts` ファイルを編集または作成し、型を設定します。
+Firebase環境変数のIntelliSenseを有効にしたい場合は、`src/`ディレクトリの`env.d.ts`ファイルを編集または作成し、型を設定します。
 
 ```ts title="src/env.d.ts"
 interface ImportMetaEnv {
@@ -65,7 +65,7 @@ interface ImportMeta {
 ```
 
 :::tip
-Astroの[環境変数](/ja/guides/environment-variables/)と `.env` ファイルの詳細をご覧ください。
+Astroの[環境変数](/ja/guides/environment-variables/)と`.env`ファイルの詳細をご覧ください。
 :::
 
 プロジェクトには次の新しいファイルが含まれるようになりました。
@@ -104,9 +104,9 @@ AstroをFirebaseと接続するには、お好みのパッケージマネージ�
   </Fragment>
 </PackageManagerTabs>
 
-次に、`src/` ディレクトリに `firebase` という名前のフォルダを作成し、このフォルダに `client.ts` と `server.ts` という2つの新しいファイルを追加します。
+次に、`src/`ディレクトリに`firebase`という名前のフォルダを作成し、このフォルダに`client.ts`と`server.ts`という2つの新しいファイルを追加します。
 
-`client.ts` では、Webアプリ認証情報と `firebase` パッケージを使用してクライアントでFirebaseを初期化する次のコードを追加します。
+`client.ts`では、Webアプリ認証情報と`firebase`パッケージを使用してクライアントでFirebaseを初期化する次のコードを追加します。
 
 ```ts title="src/firebase/client.ts"
 import { initializeApp } from "firebase/app";
@@ -124,10 +124,10 @@ export const app = initializeApp(firebaseConfig);
 ```
 
 :::note
-`firebaseConfig` オブジェクトを独自のWebアプリ認証情報に置き換えることを忘れないでください。
+`firebaseConfig`オブジェクトを独自のWebアプリ認証情報に置き換えることを忘れないでください。
 :::
 
-`server.ts` では、プロジェクト認証情報と `firebase-admin` パッケージを使用してサーバーでFirebaseを初期化する次のコードを追加します。
+`server.ts`では、プロジェクト認証情報と`firebase-admin`パッケージを使用してサーバーでFirebaseを初期化する次のコードを追加します。
 
 ```ts title="src/firebase/server.ts"
 import type { ServiceAccount } from "firebase-admin";
@@ -163,7 +163,7 @@ export const app = activeApps.length === 0 ? initApp() : activeApps[0];
 ```
 
 :::note
-`serviceAccount` オブジェクトを独自のプロジェクト認証情報に置き換えることを忘れないでください。
+`serviceAccount`オブジェクトを独自のプロジェクト認証情報に置き換えることを忘れないでください。
 :::
 
 最後に、プロジェクトには次の新しいファイルが含まれるようになりました。
@@ -194,9 +194,9 @@ AstroでのFirebase認証には、次の3つの [Astroサーバーエンドポ�
 - `GET /api/auth/signout` - ユーザーをサインアウトする
 - `POST /api/auth/register` - ユーザーを登録する
 
-新しいディレクトリ `src/pages/api/auth/` に認証に関連する3つのエンドポイント `signin.ts`、`signout.ts`、`register.ts` を作成します。
+新しいディレクトリ`src/pages/api/auth/`に認証に関連する3つのエンドポイント`signin.ts`、`signout.ts`、`register.ts`を作成します。
 
-`signin.ts` には、Firebaseを使用してユーザーをサインインするコードが含まれています。
+`signin.ts`には、Firebaseを使用してユーザーをサインインするコードが含まれています。
 
 ```ts title="src/pages/api/auth/signin.ts"
 import type { APIRoute } from "astro";
@@ -241,14 +241,14 @@ export const GET: APIRoute = async ({ request, cookies, redirect }) => {
 ```
 
 :::caution
-Firebaseでは[1 つのクッキーの使用のみが許可され、それは `__session` という名前でなければなりません](https://firebase.google.com/docs/hosting/manage-cache#using_cookies)。クライアントが送信する他のクッキーは、アプリケーションには表示されません。
+Firebaseでは[1 つのクッキーの使用のみが許可され、それは`__session`という名前でなければなりません](https://firebase.google.com/docs/hosting/manage-cache#using_cookies)。クライアントが送信する他のクッキーは、アプリケーションには表示されません。
 :::
 
 :::note
 これはsigninエンドポイントの基本的な実装です。ニーズに合わせて、このエンドポイントにより多くのロジックを追加できます。
 :::
 
-`signout.ts` には、セッションクッキーを削除してユーザーをログアウトするコードが含まれています。
+`signout.ts`には、セッションクッキーを削除してユーザーをログアウトするコードが含まれています。
 
 ```ts title="src/pages/api/auth/signout.ts"
 import type { APIRoute } from "astro";
@@ -265,7 +265,7 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
 これはsignoutエンドポイントの基本的な実装です。ニーズに合わせて、このエンドポイントにより多くのロジックを追加できます。
 :::
 
-`register.ts` には、Firebaseを使用してユーザーを登録するコードが含まれています。
+`register.ts`には、Firebaseを使用してユーザーを登録するコードが含まれています。
 
 ```ts title="src/pages/api/auth/register.ts"
 import type { APIRoute } from "astro";
@@ -336,7 +336,7 @@ Firebaseエンドポイントを使用するページを作成します。
 - `src/pages/signin` - ユーザーをサインインするフォームを含む
 - `src/pages/dashboard` - 認証されたユーザーのみがアクセスできるダッシュボードを含む
 
-以下の例 `src/pages/register.astro` には、`/api/auth/register` エンドポイントに `POST` リクエストを送信するフォームが含まれています。このエンドポイントは、フォームのデータを使用して新しいユーザーを作成し、その後ユーザーを `/signin` ページにリダイレクトします。
+以下の例`src/pages/register.astro`には、`/api/auth/register`エンドポイントに`POST`リクエストを送信するフォームが含まれています。このエンドポイントは、フォームのデータを使用して新しいユーザーを作成し、その後ユーザーを`/signin`ページにリダイレクトします。
 
 ```astro title="src/pages/register.astro"
 ---
@@ -358,11 +358,11 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 ```
 
-`src/pages/signin.astro` はFirebaseサーバーアプリを使用してユーザーのセッションクッキーを検証します。ユーザーが認証されている場合、ページはユーザーを `/dashboard` ページにリダイレクトします。
+`src/pages/signin.astro`はFirebaseサーバーアプリを使用してユーザーのセッションクッキーを検証します。ユーザーが認証されている場合、ページはユーザーを`/dashboard`ページにリダイレクトします。
 
-以下のページ例には、Firebaseクライアントアプリによって生成されたIDトークンを使用して `/api/auth/signin` エンドポイントに `POST` リクエストを送信するフォームが含まれています。
+以下のページ例には、Firebaseクライアントアプリによって生成されたIDトークンを使用して`/api/auth/signin`エンドポイントに`POST`リクエストを送信するフォームが含まれています。
 
-エンドポイントはIDトークンを検証し、ユーザー用の新しいセッションクッキーを作成します。その後、エンドポイントはユーザーを `/dashboard` ページにリダイレクトします。
+エンドポイントはIDトークンを検証し、ユーザー用の新しいセッションクッキーを作成します。その後、エンドポイントはユーザーを`/dashboard`ページにリダイレクトします。
 
 ```astro title="src/pages/signin.astro"
 ---
@@ -434,11 +434,11 @@ if (Astro.cookies.has("__session")) {
 </script>
 ```
 
-`src/pages/dashboard.astro` はFirebaseサーバーアプリを使用してユーザーのセッションクッキーを検証します。ユーザーが認証されていない場合、ページはユーザーを `/signin` ページにリダイレクトします。
+`src/pages/dashboard.astro`はFirebaseサーバーアプリを使用してユーザーのセッションクッキーを検証します。ユーザーが認証されていない場合、ページはユーザーを`/signin`ページにリダイレクトします。
 
-以下のページ例では、ユーザーの名前とサインアウトボタンが表示されます。ボタンをクリックすると、`/api/auth/signout` エンドポイントに `GET` リクエストが送信されます。
+以下のページ例では、ユーザーの名前とサインアウトボタンが表示されます。ボタンをクリックすると、`/api/auth/signout`エンドポイントに`GET`リクエストが送信されます。
 
-エンドポイントはユーザーのセッションクッキーを削除し、ユーザーを `/signin` ページにリダイレクトします。
+エンドポイントはユーザーのセッションクッキーを削除し、ユーザーを`/signin`ページにリダイレクトします。
 
 ```astro title="src/pages/dashboard.astro"
 ---
@@ -478,9 +478,9 @@ Firebaseコンソールで、**Authentication** セクションに移動し、**
 
 以下の例では **Google** プロバイダーを使用します。
 
-`signin.astro` ページを編集して、以下を追加します。
+`signin.astro`ページを編集して、以下を追加します。
 - 既存のフォームの下にGoogleでサインインするボタン
-- 既存の `<script>` でサインインプロセスを処理するボタンのイベントリスナー。
+- 既存の`<script>`でサインインプロセスを処理するボタンのイベントリスナー。
 
 ```astro title="src/pages/signin.astro" ins={27, 34, 35, 69-83}
 ---
@@ -569,9 +569,9 @@ if (Astro.cookies.has("__session")) {
 </script>
 ```
 
-クリックすると、Googleサインインボタンはポップアップウィンドウを開いてGoogleでサインインします。ユーザーがサインインすると、OAuthプロバイダーによって生成されたIDトークンを使用して `/api/auth/signin` エンドポイントに `POST` リクエストが送信されます。
+クリックすると、Googleサインインボタンはポップアップウィンドウを開いてGoogleでサインインします。ユーザーがサインインすると、OAuthプロバイダーによって生成されたIDトークンを使用して`/api/auth/signin`エンドポイントに`POST`リクエストが送信されます。
 
-エンドポイントはIDトークンを検証し、ユーザー用の新しいセッションクッキーを作成します。その後、エンドポイントはユーザーを `/dashboard` ページにリダイレクトします。
+エンドポイントはIDトークンを検証し、ユーザー用の新しいセッションクッキーを作成します。その後、エンドポイントはユーザーを`/dashboard`ページにリダイレクトします。
 
 ## Firestoreデータベースへの接続
 
@@ -590,13 +590,13 @@ if (Astro.cookies.has("__session")) {
 
 ### サーバーエンドポイントの作成
 
-新しいディレクトリ `src/pages/api/friends/` に `index.ts` と `[id].ts` という2つの新しいファイルを作成します。これらは、次の方法でFirestoreデータベースと対話する2つのサーバーエンドポイントを作成します。
+新しいディレクトリ`src/pages/api/friends/`に`index.ts`と`[id].ts`という2つの新しいファイルを作成します。これらは、次の方法でFirestoreデータベースと対話する2つのサーバーエンドポイントを作成します。
 
 - `POST /api/friends`: friendsコレクションに新しいドキュメントを作成する。
 - `POST /api/friends/:id`: friendsコレクションのドキュメントを更新する。
 - `DELETE /api/friends/:id`: friendsコレクションのドキュメントを削除する。
 
-`index.ts` には、friendsコレクションに新しいドキュメントを作成するコードが含まれます。
+`index.ts`には、friendsコレクションに新しいドキュメントを作成するコードが含まれます。
 
 ```ts title="src/pages/api/friends/index.ts"
 import type { APIRoute } from "astro";
@@ -632,10 +632,10 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 ```
 
 :::note
-これは `friends` エンドポイントの基本的な実装です。ニーズに合わせて、このエンドポイントにより多くのロジックを追加できます。
+これは`friends`エンドポイントの基本的な実装です。ニーズに合わせて、このエンドポイントにより多くのロジックを追加できます。
 :::
 
-`[id].ts` には、friendsコレクションのドキュメントを更新および削除するコードが含まれます。
+`[id].ts`には、friendsコレクションのドキュメントを更新および削除するコードが含まれます。
 
 ```ts title="src/pages/api/friends/[id].ts"
 import type { APIRoute } from "astro";
@@ -696,7 +696,7 @@ export const DELETE: APIRoute = async ({ params, redirect }) => {
 ```
 
 :::note
-これは `friends/:id` エンドポイントの基本的な実装です。ニーズに合わせて、このエンドポイントにより多くのロジックを追加できます。
+これは`friends/:id`エンドポイントの基本的な実装です。ニーズに合わせて、このエンドポイントにより多くのロジックを追加できます。
 :::
 
 Firestore用のサーバーエンドポイントを作成後、プロジェクトディレクトリには次の新しいファイルが含まれるようになりました。
@@ -728,7 +728,7 @@ Firestoreエンドポイントを使用するページを作成します。
 
 #### 新しいレコードの追加
 
-以下の例 `src/pages/add.astro` には、`/api/friends` エンドポイントに `POST` リクエストを送信するフォームが含まれています。このエンドポイントは、フォームのデータを使用して新しい友達を作成し、その後ユーザーを `/dashboard` ページにリダイレクトします。
+以下の例`src/pages/add.astro`には、`/api/friends`エンドポイントに`POST`リクエストを送信するフォームが含まれています。このエンドポイントは、フォームのデータを使用して新しい友達を作成し、その後ユーザーを`/dashboard`ページにリダイレクトします。
 
 ```astro title="src/pages/add.astro"
 ---
@@ -751,9 +751,9 @@ import Layout from "../layouts/Layout.astro";
 
 #### レコードの編集または削除
 
-`src/pages/edit/[id].astro` には、友達のデータを編集するフォームと友達を削除するボタンが含まれます。送信時、このページは `/api/friends/:id` エンドポイントに `POST` リクエストを送信して友達のデータを更新します。
+`src/pages/edit/[id].astro`には、友達のデータを編集するフォームと友達を削除するボタンが含まれます。送信時、このページは`/api/friends/:id`エンドポイントに`POST`リクエストを送信して友達のデータを更新します。
 
-ユーザーが削除ボタンをクリックすると、このページは `/api/friends/:id` エンドポイントに `DELETE` リクエストを送信して友達を削除します。
+ユーザーが削除ボタンをクリックすると、このページは`/api/friends/:id`エンドポイントに`DELETE`リクエストを送信して友達を削除します。
 
 ```astro title="src/pages/edit/[id].astro"
 ---
@@ -821,7 +821,7 @@ const friend = friendSnapshot.data() as Friend;
 
 #### 個別レコードの表示
 
-`src/pages/friend/[id].astro` は友達の詳細を表示します。
+`src/pages/friend/[id].astro`は友達の詳細を表示します。
 
 ```astro title="src/pages/friend/[id].astro"
 ---
@@ -861,7 +861,7 @@ const friend = friendSnapshot.data() as Friend;
 
 #### 編集ボタン付きのレコードリストの表示
 
-最後に、`src/pages/dashboard.astro` は友達のリストを表示します。各友達には詳細ページへのリンクと、ユーザーを編集ページにリダイレクトする編集ボタンがあります。
+最後に、`src/pages/dashboard.astro`は友達のリストを表示します。各友達には詳細ページへのリンクと、ユーザーを編集ページにリダイレクトする編集ボタンがあります。
 
 ```astro title="src/pages/dashboard.astro"
 ---

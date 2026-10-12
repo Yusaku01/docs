@@ -17,14 +17,14 @@ import { FileTree } from '@astrojs/starlight/components';
 ### 前提条件
 
 - Supabaseプロジェクト。まだお持ちでない場合は、[supabase.com](https://supabase.com/) で無料でサインアップして、新しいプロジェクトを作成できます。
-- [オンデマンドレンダリング用の `output: 'server'`](/ja/guides/on-demand-rendering/) が有効なAstroプロジェクト。
+- [オンデマンドレンダリング用の`output: 'server'`](/ja/guides/on-demand-rendering/) が有効なAstroプロジェクト。
 - プロジェクト用のSupabase認証情報。これらは、Supabaseプロジェクトの **Settings > API** タブで確認できます。
   - `SUPABASE_URL`: SupabaseプロジェクトのURL。
   - `SUPABASE_ANON_KEY`: Supabaseプロジェクトの匿名キー。
 
 ### Supabase認証情報の追加
 
-Supabase認証情報をAstroプロジェクトに追加するには、`.env` ファイルに次の内容を追加します。
+Supabase認証情報をAstroプロジェクトに追加するには、`.env`ファイルに次の内容を追加します。
 
 ```ini title=".env"
 SUPABASE_URL=YOUR_SUPABASE_URL
@@ -33,7 +33,7 @@ SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 
 これで、これらの環境変数がプロジェクトで使用できるようになります。
 
-環境変数のIntelliSenseを有効にしたい場合は、`src/` ディレクトリの `env.d.ts` を編集または作成し、次の内容を追加します。
+環境変数のIntelliSenseを有効にしたい場合は、`src/`ディレクトリの`env.d.ts`を編集または作成し、次の内容を追加します。
 
 ```ts title="src/env.d.ts"
 interface ImportMetaEnv {
@@ -47,7 +47,7 @@ interface ImportMeta {
 ```
 
 :::tip
-Astroの[環境変数](/ja/guides/environment-variables/)と `.env` ファイルの詳細をご覧ください。
+Astroの[環境変数](/ja/guides/environment-variables/)と`.env`ファイルの詳細をご覧ください。
 :::
 
 プロジェクトには次のファイルが含まれるようになりました。
@@ -62,7 +62,7 @@ Astroの[環境変数](/ja/guides/environment-variables/)と `.env` ファイル
 
 ### 依存関係のインストール
 
-Supabaseに接続するには、プロジェクトに `@supabase/supabase-js` をインストールする必要があります。
+Supabaseに接続するには、プロジェクトに`@supabase/supabase-js`をインストールする必要があります。
 
 <PackageManagerTabs>
   <Fragment slot="npm">
@@ -82,9 +82,9 @@ Supabaseに接続するには、プロジェクトに `@supabase/supabase-js` �
   </Fragment>
 </PackageManagerTabs>
 
-次に、`src/` ディレクトリに `lib` という名前のフォルダを作成します。ここにSupabaseクライアントを追加します。
+次に、`src/`ディレクトリに`lib`という名前のフォルダを作成します。ここにSupabaseクライアントを追加します。
 
-`supabase.ts` に次の内容を追加して、Supabaseクライアントを初期化します。
+`supabase.ts`に次の内容を追加して、Supabaseクライアントを初期化します。
 
 ```ts title="src/lib/supabase.ts"
 import { createClient } from "@supabase/supabase-js";
@@ -124,7 +124,7 @@ Supabaseは認証機能を標準で提供しています。メール/パスワ�
 - `POST /api/auth/signin`: ユーザーをサインインする。
 - `GET /api/auth/signout`: ユーザーをサインアウトする。
 
-プロジェクトの `src/pages/api/auth` ディレクトリにこれらのエンドポイントを作成します。`static` レンダリングモードを使用している場合は、これらのエンドポイントをオンデマンドでレンダリングするために、各ファイルの先頭に `export const prerender = false` を指定する必要があります。プロジェクトには次の新しいファイルが含まれるようになります。
+プロジェクトの`src/pages/api/auth`ディレクトリにこれらのエンドポイントを作成します。`static`レンダリングモードを使用している場合は、これらのエンドポイントをオンデマンドでレンダリングするために、各ファイルの先頭に`export const prerender = false`を指定する必要があります。プロジェクトには次の新しいファイルが含まれるようになります。
 
 <FileTree title="Project Structure">
 - src/
@@ -142,7 +142,7 @@ Supabaseは認証機能を標準で提供しています。メール/パスワ�
 - package.json
 </FileTree>
 
-`register.ts` はSupabaseに新しいユーザーを作成します。メールとパスワードを含む `POST` リクエストを受け付けます。その後、SupabaseSDKを使用して新しいユーザーを作成します。
+`register.ts`はSupabaseに新しいユーザーを作成します。メールとパスワードを含む`POST`リクエストを受け付けます。その後、SupabaseSDKを使用して新しいユーザーを作成します。
 
 ```ts title="src/pages/api/auth/register.ts"
 // `output: 'static'` が設定されている場合。
@@ -172,7 +172,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 };
 ```
 
-`signin.ts` はユーザーをサインインします。メールとパスワードを含む `POST` リクエストを受け付けます。その後、SupabaseSDKを使用してユーザーをサインインします。
+`signin.ts`はユーザーをサインインします。メールとパスワードを含む`POST`リクエストを受け付けます。その後、SupabaseSDKを使用してユーザーをサインインします。
 
 ```ts title="src/pages/api/auth/signin.ts"
 // `output: 'static'` が設定されている場合。
@@ -209,7 +209,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 };
 ```
 
-`signout.ts` はユーザーをサインアウトします。`GET` リクエストを受け付け、ユーザーのアクセストークンとリフレッシュトークンを削除します。
+`signout.ts`はユーザーをサインアウトします。`GET`リクエストを受け付け、ユーザーのアクセストークンとリフレッシュトークンを削除します。
 
 ```ts title="src/pages/api/auth/signout.ts"
 // `output: 'static'` が設定されている場合。
@@ -231,7 +231,7 @@ export const GET: APIRoute = async ({ cookies, redirect }) => {
 - `src/pages/signin`: ユーザーをサインインするフォームを含む。
 - `src/pages/dashboard`: 認証されたユーザーのみがアクセスできるページを含む。
 
-`src/pages` ディレクトリにこれらのページを作成します。プロジェクトには次の新しいファイルが含まれるようになります。
+`src/pages`ディレクトリにこれらのページを作成します。プロジェクトには次の新しいファイルが含まれるようになります。
 
 <FileTree title="Project Structure">
 - src/
@@ -252,7 +252,7 @@ export const GET: APIRoute = async ({ cookies, redirect }) => {
 - package.json
 </FileTree>
 
-`register.astro` には新しいユーザーを登録するフォームが含まれています。メールとパスワードを受け付け、`/api/auth/register` に `POST` リクエストを送信します。
+`register.astro`には新しいユーザーを登録するフォームが含まれています。メールとパスワードを受け付け、`/api/auth/register`に`POST`リクエストを送信します。
 
 ```astro title="src/pages/register.astro"
 ---
@@ -272,7 +272,7 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 ```
 
-`signin.astro` にはユーザーをサインインするフォームが含まれています。メールとパスワードを受け付け、`/api/auth/signin` に `POST` リクエストを送信します。また、アクセストークンとリフレッシュトークンの存在をチェックします。それらが存在する場合は、ダッシュボードにリダイレクトします。
+`signin.astro`にはユーザーをサインインするフォームが含まれています。メールとパスワードを受け付け、`/api/auth/signin`に`POST`リクエストを送信します。また、アクセストークンとリフレッシュトークンの存在をチェックします。それらが存在する場合は、ダッシュボードにリダイレクトします。
 
 ```astro title="src/pages/signin.astro"
 ---
@@ -301,7 +301,7 @@ if (accessToken && refreshToken) {
 </Layout>
 ```
 
-`dashboard.astro` には認証されたユーザーのみがアクセスできるページが含まれています。アクセストークンとリフレッシュトークンの存在をチェックします。それらが存在しないか無効な場合は、サインインページにリダイレクトします。
+`dashboard.astro`には認証されたユーザーのみがアクセスできるページが含まれています。アクセストークンとリフレッシュトークンの存在をチェックします。それらが存在しないか無効な場合は、サインインページにリダイレクトします。
 
 ```astro title="src/pages/dashboard.astro"
 ---
@@ -353,7 +353,7 @@ const email = session.data.user?.email;
 
 ### OAuth 認証の追加
 
-プロジェクトにOAuth認証を追加するには、`"pkce"` で認証フローを有効にするようにSupabaseクライアントを編集する必要があります。認証フローの詳細については、[Supabaseのドキュメント](https://supabase.com/docs/guides/auth/server-side-rendering#understanding-the-authentication-flow)をご覧ください。
+プロジェクトにOAuth認証を追加するには、`"pkce"`で認証フローを有効にするようにSupabaseクライアントを編集する必要があります。認証フローの詳細については、[Supabaseのドキュメント](https://supabase.com/docs/guides/auth/server-side-rendering#understanding-the-authentication-flow)をご覧ください。
 
 ```ts title="src/lib/supabase.ts" ins={6-10}
 import { createClient } from "@supabase/supabase-js";
@@ -373,7 +373,7 @@ export const supabase = createClient(
 
 次の例では、OAuthプロバイダーとしてGitHubを使用します。プロジェクトをGitHubに接続するには、[Supabaseのドキュメント](https://supabase.com/docs/guides/auth/social-login/auth-github)の手順に従ってください。
 
-次に、`src/pages/api/auth/callback.ts` でOAuthコールバックを処理する新しいサーバーエンドポイントを作成します。このエンドポイントは、OAuthコードをアクセストークンとリフレッシュトークンに交換するために使用されます。
+次に、`src/pages/api/auth/callback.ts`でOAuthコールバックを処理する新しいサーバーエンドポイントを作成します。このエンドポイントは、OAuthコードをアクセストークンとリフレッシュトークンに交換するために使用されます。
 
 ```ts title="src/pages/api/auth/callback.ts"
 import type { APIRoute } from "astro";
@@ -405,7 +405,7 @@ export const GET: APIRoute = async ({ url, cookies, redirect }) => {
 };
 ```
 
-次に、サインインページを編集して、OAuthプロバイダーでサインインする新しいボタンを含めます。このボタンは、`provider` をOAuthプロバイダーの名前に設定して `/api/auth/signin` に `POST` リクエストを送信する必要があります。
+次に、サインインページを編集して、OAuthプロバイダーでサインインする新しいボタンを含めます。このボタンは、`provider`をOAuthプロバイダーの名前に設定して`/api/auth/signin`に`POST`リクエストを送信する必要があります。
 
 ```astro title="src/pages/signin.astro" ins={23}
 ---
@@ -435,7 +435,7 @@ if (accessToken && refreshToken) {
 </Layout>
 ```
 
-最後に、OAuthプロバイダーを処理するようにサインインサーバーエンドポイントを編集します。`provider` が存在する場合、OAuthプロバイダーにリダイレクトします。それ以外の場合は、メールとパスワードでユーザーをサインインします。
+最後に、OAuthプロバイダーを処理するようにサインインサーバーエンドポイントを編集します。`provider`が存在する場合、OAuthプロバイダーにリダイレクトします。それ以外の場合は、メールとパスワードでユーザーをサインインします。
 
 ```ts title="src/pages/api/auth/signin.ts" ins={10-23}
 import type { APIRoute } from "astro";

@@ -69,7 +69,7 @@ Astroは、最小限の設定でプロジェクトをGitHub Pagesにデプロイ
 
     Astro actionはオプションの入力を受け取ります。`with:`行と使用したい入力のコメントアウトを外して設定します。
 
-    サイトにパブリックな環境変数が必要な場合は、`env:` 行のコメントアウトを外して追加します。（プライベートな環境変数の追加については、[シークレットの設定に関するGitHubドキュメント](https://docs.github.com/ja/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#creating-configuration-variables-for-a-repository)を参照してください。）
+    サイトにパブリックな環境変数が必要な場合は、`env:`行のコメントアウトを外して追加します。（プライベートな環境変数の追加については、[シークレットの設定に関するGitHubドキュメント](https://docs.github.com/ja/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#creating-configuration-variables-for-a-repository)を参照してください。）
     
     :::caution
     公式のAstro [action](https://github.com/withastro/action)は、ロックファイルをスキャンして使用しているパッケージマネージャー（`npm`、`yarn`、`pnpm`、または`bun`）を検出します。パッケージマネージャーが自動的に生成した`package-lock.json`、`yarn.lock`、`pnpm-lock.yaml`、または`bun.lockb`ファイルをリポジトリにコミットしてください。

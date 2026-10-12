@@ -29,9 +29,9 @@ Astroでは**テンプレートディレクティブ**と呼ばれる特別なHT
 
 ### `class:list`
 
-`class:list={...}` は、複数のクラス値を配列で受け取り、それを一つのクラス文字列に変換します。この機能は、@lukeedの人気ライブラリ [clsx](https://github.com/lukeed/clsx) を使って実現しています。
+`class:list={...}`は、複数のクラス値を配列で受け取り、それを一つのクラス文字列に変換します。この機能は、@lukeedの人気ライブラリ [clsx](https://github.com/lukeed/clsx) を使って実現しています。
 
-`class:list` で使える値の種類は以下の通りです。
+`class:list`で使える値の種類は以下の通りです。
 - 文字列：そのまま要素のクラスとして追加されます
 - オブジェクト：値が真のキーが要素のクラスとして追加されます
 - 配列：中身を展開して処理します
@@ -46,7 +46,7 @@ Astroでは**テンプレートディレクティブ**と呼ばれる特別なHT
 
 ### `set:html`
 
-`set:html={string}` は、HTML文字列を要素の中身として挿入します。これは `el.innerHTML` を使うのと似た動作をします。
+`set:html={string}`は、HTML文字列を要素の中身として挿入します。これは`el.innerHTML`を使うのと似た動作をします。
 
 **注意：Astroは自動的にこの値をエスケープしません！** 必ず信頼できる値を使うか、テンプレートに渡す前に手動でエスケープしてください。これを怠ると、[クロスサイトスクリプティング（XSS）攻撃](https://owasp.org/www-community/attacks/xss/)の危険性があります。
 
@@ -60,7 +60,7 @@ const rawHTMLString = "Hello <strong>World</strong>"
   <!-- Output: <h1>Hello <strong>World</strong></h1> -->
 ```
 
-また、`set:html` は `<Fragment>` でも使えるので、余分なラッパー要素を追加せずにHTMLを挿入できます。これはCMSからHTMLを取得する場合などに特に便利です。
+また、`set:html`は`<Fragment>`でも使えるので、余分なラッパー要素を追加せずにHTMLを挿入できます。これはCMSからHTMLを取得する場合などに特に便利です。
 
 ```astro
 ---
@@ -69,7 +69,7 @@ const cmsContent = await fetchHTMLFromMyCMS();
 <Fragment set:html={cmsContent}>
 ```
 
-`set:html={Promise<string>}` を使うと、PromiseでラップされたHTML文字列を要素に挿入できます。
+`set:html={Promise<string>}`を使うと、PromiseでラップされたHTML文字列を要素に挿入できます。
 
 これは、データベースなどに保存されている外部のHTMLを挿入する際に役立ちます。
 
@@ -80,15 +80,15 @@ import api from '../db/api.js';
 <article set:html={api.getArticle(Astro.props.id)}></article>
 ```
 
-`set:html={Promise<Response>}` を使うと、[Response](https://developer.mozilla.org/ja/docs/Web/API/Response) オブジェクトの内容を要素に挿入できます。
+`set:html={Promise<Response>}`を使うと、[Response](https://developer.mozilla.org/ja/docs/Web/API/Response) オブジェクトの内容を要素に挿入できます。
 
-これは主に `fetch()` を使う場合に便利です。例えば、以前の静的サイトジェネレーターで作成した古い記事を取得する際などに使えます。
+これは主に`fetch()`を使う場合に便利です。例えば、以前の静的サイトジェネレーターで作成した古い記事を取得する際などに使えます。
 
 ```astro
 <article set:html={fetch('http://example/old-posts/making-soup.html')}></article>
 ```
 
-`set:html` はどんなタグでも使えますし、必ずしもHTMLを含める必要はありません。例えば、ページに [JSON-LD](https://json-ld.org/) スキーマを追加したい場合、`<script>` タグ内で [`JSON.stringify()`](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) と組み合わせて使うこともできます。
+`set:html`はどんなタグでも使えますし、必ずしもHTMLを含める必要はありません。例えば、ページに [JSON-LD](https://json-ld.org/) スキーマを追加したい場合、`<script>`タグ内で [`JSON.stringify()`](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) と組み合わせて使うこともできます。
 
 ```astro
 <script type="application/ld+json" set:html={JSON.stringify({
@@ -104,7 +104,7 @@ import api from '../db/api.js';
 
 ### `set:text`
 
-`set:text={string}` は、テキスト文字列を要素に挿入します。これは、`el.innerText` を設定するのと似ています。`set:html` とは異なり、渡された `string` 値はAstroによって自動的にエスケープされます。
+`set:text={string}`は、テキスト文字列を要素に挿入します。これは、`el.innerText`を設定するのと似ています。`set:html`とは異なり、渡された`string`値はAstroによって自動的にエスケープされます。
 
 これは、テンプレート式に直接変数を渡すことと等価です（例：`<div>{someText}</div>`）。そのため、このディレクティブは一般的にはあまり使用されません。
 
@@ -183,10 +183,10 @@ import api from '../db/api.js';
 - **優先度:** 低
 - **適している場面:** サイドバーの切り替えボタンや、特定の画面サイズでのみ表示される要素など
 
-`client:media={string}` は、指定したCSSメディアクエリの条件が満たされたときに、コンポーネントのJavaScriptを読み込み、動的機能を有効化します。
+`client:media={string}`は、指定したCSSメディアクエリの条件が満たされたときに、コンポーネントのJavaScriptを読み込み、動的機能を有効化します。
 
 :::note
-もしコンポーネントがすでにCSSのメディアクエリで表示/非表示を制御している場合は、同じメディアクエリをこのディレクティブに指定するよりも、単に `client:visible` を使用する方が簡単かもしれません。
+もしコンポーネントがすでにCSSのメディアクエリで表示/非表示を制御している場合は、同じメディアクエリをこのディレクティブに指定するよりも、単に`client:visible`を使用する方が簡単かもしれません。
 :::
 
 ```astro
@@ -195,7 +195,7 @@ import api from '../db/api.js';
 
 ### `client:only`
 
-`client:only={string}` は、サーバー側でのHTMLレンダリングを**行わず**、クライアント側でのみレンダリングします。ページ読み込み時にすぐにコンポーネントを読み込み、レンダリングし、動的機能を有効化するという点で、`client:load` と似た動作をします。
+`client:only={string}`は、サーバー側でのHTMLレンダリングを**行わず**、クライアント側でのみレンダリングします。ページ読み込み時にすぐにコンポーネントを読み込み、レンダリングし、動的機能を有効化するという点で、`client:load`と似た動作をします。
 
 **重要：コンポーネントが使用しているフレームワークを正確に指定する必要があります！** Astroはビルド時やサーバー側でこのコンポーネントを実行しないため、明示的に指定しない限り、どのフレームワークを使用しているか把握できません。
 
@@ -220,7 +220,7 @@ import api from '../db/api.js';
 
 ### カスタムクライアントディレクティブ
 
-Astro 2.6.0以降、インテグレーションを通じて独自の `client:*` ディレクティブを追加できるようになりました。これにより、コンポーネントをいつ、どのように動的に機能させるかをカスタマイズできます。
+Astro 2.6.0以降、インテグレーションを通じて独自の`client:*`ディレクティブを追加できるようになりました。これにより、コンポーネントをいつ、どのように動的に機能させるかをカスタマイズできます。
 
 カスタムクライアントディレクティブの作成方法については、[`addClientDirective` API](/ja/reference/integrations-reference/#addclientdirective-option) のページを参照してください。
 
@@ -230,7 +230,7 @@ Astro 2.6.0以降、インテグレーションを通じて独自の `client:*` 
 
 ### `server:defer`
 
-`server:defer` ディレクティブを使うと、そのコンポーネントがサーバーアイランドとなり、ページ全体のレンダリングとは別にオンデマンドでレンダリングされます。
+`server:defer`ディレクティブを使うと、そのコンポーネントがサーバーアイランドとなり、ページ全体のレンダリングとは別にオンデマンドでレンダリングされます。
 
 <ReadMore>詳しくは[サーバーアイランド](/ja/guides/server-islands/)をご覧ください。</ReadMore>
 
@@ -240,15 +240,15 @@ Astro 2.6.0以降、インテグレーションを通じて独自の `client:*` 
 
 ## スクリプトとスタイルのディレクティブ
 
-これらのディレクティブは、HTMLの `<script>` と `<style>` タグでのみ使えます。ページ上のクライアントサイドJavaScriptとCSSの扱い方を制御するためのものです。
+これらのディレクティブは、HTMLの`<script>`と`<style>`タグでのみ使えます。ページ上のクライアントサイドJavaScriptとCSSの扱い方を制御するためのものです。
 
 ### `is:global`
 
-通常、Astroは `<style>` 内のCSSルールを自動的にコンポーネント内に限定します。この動作を解除したい場合は `is:global` ディレクティブを使います。
+通常、Astroは`<style>`内のCSSルールを自動的にコンポーネント内に限定します。この動作を解除したい場合は`is:global`ディレクティブを使います。
 
-`is:global` を使うと、`<style>` タグの中身がページ全体に適用されます。つまり、AstroのCSS限定機能が無効になります。これは、`<style>` タグ内のすべてのセレクタを `:global()` で囲むのと同じ効果があります。
+`is:global`を使うと、`<style>`タグの中身がページ全体に適用されます。つまり、AstroのCSS限定機能が無効になります。これは、`<style>`タグ内のすべてのセレクタを`:global()`で囲むのと同じ効果があります。
 
-同じコンポーネント内で `<style>` と `<style is:global>` を併用することもできます。これにより、一部のスタイルをグローバルに適用しつつ、大部分のCSSはコンポーネント内に限定することができます。
+同じコンポーネント内で`<style>`と`<style is:global>`を併用することもできます。これにより、一部のスタイルをグローバルに適用しつつ、大部分のCSSはコンポーネント内に限定することができます。
 
 <ReadMore>グローバルスタイルの詳細については、[スタイリングとCSS](/ja/guides/styling/#global-styles)のページをご覧ください。</ReadMore>
 
@@ -260,21 +260,21 @@ Astro 2.6.0以降、インテグレーションを通じて独自の `client:*` 
 
 ### `is:inline`
 
-通常、Astroはページ上の `<script>` と `<style>` タグを処理し、最適化して、まとめます。この動作を止めたい場合は `is:inline` ディレクティブを使います。
+通常、Astroはページ上の`<script>`と`<style>`タグを処理し、最適化して、まとめます。この動作を止めたい場合は`is:inline`ディレクティブを使います。
 
-`is:inline` を使うと、Astroは `<script>` や `<style>` タグをそのまま最終的なHTMLに出力します。内容の処理や最適化、まとめは行われません。ただし、これによりAstroの一部機能（npmパッケージのインポートや、SassのようなCSSプリプロセッサの使用など）が制限されます。
+`is:inline`を使うと、Astroは`<script>`や`<style>`タグをそのまま最終的なHTMLに出力します。内容の処理や最適化、まとめは行われません。ただし、これによりAstroの一部機能（npmパッケージのインポートや、SassのようなCSSプリプロセッサの使用など）が制限されます。
 
-`is:inline` ディレクティブを使うと、`<style>` と `<script>` タグは以下のようになります。
+`is:inline`ディレクティブを使うと、`<style>`と`<script>`タグは以下のようになります。
 
 - 別ファイルにまとめられません。そのため、外部ファイルの読み込みを制御する[`defer`などの属性](https://javascript.info/script-async-defer)は効果がありません。
 - 重複排除されません。要素は記述された回数だけ出力されます。
-- `import`、`@import`、`url()` の参照が `.astro` ファイルからの相対パスで解決されません。
+- `import`、`@import`、`url()`の参照が`.astro`ファイルからの相対パスで解決されません。
 - 記述された位置にそのまま最終的なHTMLとして出力されます。
 - スタイルはグローバルになり、コンポーネントに限定されません。
 
 :::caution
-`<script>` や `<style>` タグに `src` 以外の属性がある場合、`is:inline` ディレクティブが自動的に適用されます。
-ただし、`<style>` タグに [`define:vars` ディレクティブ](/ja/reference/directives-reference/#definevars) を使用する場合は例外で、自動的に `is:inline` にはなりません。
+`<script>`や`<style>`タグに`src`以外の属性がある場合、`is:inline`ディレクティブが自動的に適用されます。
+ただし、`<style>`タグに [`define:vars`ディレクティブ](/ja/reference/directives-reference/#definevars) を使用する場合は例外で、自動的に`is:inline`にはなりません。
 :::
 
 ```astro
@@ -294,7 +294,7 @@ Astro 2.6.0以降、インテグレーションを通じて独自の `client:*` 
 
 ### `define:vars`
 
-`define:vars={...}` を使うと、コンポーネントのフロントマターからクライアントの `<script>` や `<style>` タグに、サーバーサイドの変数を渡せます。JSON形式にできるフロントマター変数なら何でも使えます。`Astro.props` を通じてコンポーネントに渡された `props` も含みます。値は [`JSON.stringify()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) でシリアライズされます。
+`define:vars={...}`を使うと、コンポーネントのフロントマターからクライアントの`<script>`や`<style>`タグに、サーバーサイドの変数を渡せます。JSON形式にできるフロントマター変数なら何でも使えます。`Astro.props`を通じてコンポーネントに渡された`props`も含みます。値は [`JSON.stringify()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) でシリアライズされます。
 
 ```astro
 ---
@@ -315,9 +315,9 @@ const message = "Astroは素晴らしい！";
 ```
 
 :::caution
-`<script>` タグで `define:vars` を使うと、自動的に [`is:inline` ディレクティブ](#isinline) が適用されます。つまり、スクリプトはまとめられずに、HTMLに直接埋め込まれます。
+`<script>`タグで`define:vars`を使うと、自動的に [`is:inline`ディレクティブ](#isinline) が適用されます。つまり、スクリプトはまとめられずに、HTMLに直接埋め込まれます。
 
-これは、Astroがスクリプトをまとめる際、そのスクリプトを一度だけ実行するようにしているためです。同じコンポーネントがページに複数回含まれていても、スクリプトは一度しか実行されません。しかし `define:vars` は、それぞれの値セットでスクリプトを再実行する必要があるため、Astroはインラインスクリプトを作成します。
+これは、Astroがスクリプトをまとめる際、そのスクリプトを一度だけ実行するようにしているためです。同じコンポーネントがページに複数回含まれていても、スクリプトは一度しか実行されません。しかし`define:vars`は、それぞれの値セットでスクリプトを再実行する必要があるため、Astroはインラインスクリプトを作成します。
 
 スクリプトに変数を渡す場合は、代わりに[手動で変数を渡す方法](/ja/guides/client-side-scripts/#pass-frontmatter-variables-to-scripts)を試してみてください。
 :::
@@ -326,7 +326,7 @@ const message = "Astroは素晴らしい！";
 
 ### `is:raw`
 
-`is:raw` は、Astroコンパイラにその要素の中身をテキストとして扱うよう指示します。これにより、その要素内ではAstroの特殊なテンプレート構文がすべて無視されます。
+`is:raw`は、Astroコンパイラにその要素の中身をテキストとして扱うよう指示します。これにより、その要素内ではAstroの特殊なテンプレート構文がすべて無視されます。
 
 例えば、テキストをHTMLに変換するカスタムのKatexコンポーネントがある場合、ユーザーは以下のように使えます。
 

@@ -36,7 +36,7 @@ import ReadMore from '~/components/ReadMore.astro';
 
 [WebStorm](https://www.jetbrains.com/webstorm/)はJavaScriptとTypeScriptに対応したIDEで、バージョン2024.2でAstro Language Serverのサポートが追加されました。このアップデートでは、構文のハイライト、コード補完、フォーマットなどの機能が追加されています。
 
-公式プラグインは[JetBrains Marketplace](https://plugins.jetbrains.com/plugin/20959-astro)から、またはIDEの"Plugins"タブで"Astro"を検索してインストールしてください。言語サーバーの切り替えは `Settings | Languages & Frameworks | TypeScript | Astro` で行えます。
+公式プラグインは[JetBrains Marketplace](https://plugins.jetbrains.com/plugin/20959-astro)から、またはIDEの"Plugins"タブで"Astro"を検索してインストールしてください。言語サーバーの切り替えは`Settings | Languages & Frameworks | TypeScript | Astro`で行えます。
 
 WebStormでのAstroサポートの詳細については、公式の[WebStorm Astro Documentation](https://www.jetbrains.com/help/webstorm/astro.html)を参照してください。
 
@@ -74,7 +74,7 @@ WebStormでのAstroサポートの詳細については、公式の[WebStorm Ast
 
 ### Biome
 
-[Biome](https://biomejs.dev/) はWeb向けのオールインワンなリンターとフォーマッターです。 [Biomeは現在、 `.astro` ファイルを実験的にサポートしており](https://biomejs.dev/internals/language-support/#html-super-languages-support)、`.astro` ファイルにおけるフロントマターのリンティングとフォーマットに使用できます。
+[Biome](https://biomejs.dev/) はWeb向けのオールインワンなリンターとフォーマッターです。 [Biomeは現在、 `.astro`ファイルを実験的にサポートしており](https://biomejs.dev/internals/language-support/#html-super-languages-support)、`.astro`ファイルにおけるフロントマターのリンティングとフォーマットに使用できます。
 
 ### Prettier
 
@@ -121,7 +121,7 @@ WebStormでのAstroサポートの詳細については、公式の[WebStorm Ast
     }
     ```
 
-3. （任意）プロジェクトに他のPrettierプラグインをインストールし、設定ファイルに追加します。これらの追加プラグインは、特定の順序で記述する必要がある場合があります。たとえば、Tailwind CSSを使用している場合、 `prettier-plugin-tailwindcss` は [`plugins`配列の最後](https://github.com/tailwindlabs/prettier-plugin-tailwindcss#compatibility-with-other-prettier-plugins)に記述する必要があります。
+3. （任意）プロジェクトに他のPrettierプラグインをインストールし、設定ファイルに追加します。これらの追加プラグインは、特定の順序で記述する必要がある場合があります。たとえば、Tailwind CSSを使用している場合、 `prettier-plugin-tailwindcss`は [`plugins`配列の最後](https://github.com/tailwindlabs/prettier-plugin-tailwindcss#compatibility-with-other-prettier-plugins)に記述する必要があります。
 
     ```json title=".prettierrc"
     {

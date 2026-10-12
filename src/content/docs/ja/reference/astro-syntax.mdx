@@ -116,13 +116,13 @@ const Component = MyComponent;
 
 - **ハイドレーションディレクティブは使えません。**[`client:*`ハイドレーションディレクティブ](/ja/guides/framework-components/#インタラクティブなコンポーネントのハイドレーション)を使用する場合、Astroはバンドルする対象のコンポーネントを知る必要がありますが、動的タグパターンではこれが機能しなくなるためです。
 
-- **[define:vars ディレクティブ](/ja/reference/directives-reference/#definevars) はサポートされていません。** もし、子要素を追加の要素(例えば`<div>`)でラップすることができない場合は、 `style={``--myVar:${value}``}` を手動で要素に追加することができます。
+- **[define:vars ディレクティブ](/ja/reference/directives-reference/#definevars) はサポートされていません。** もし、子要素を追加の要素(例えば`<div>`)でラップすることができない場合は、 `style={``--myVar:${value}``}`を手動で要素に追加することができます。
 
 ### フラグメント
 
-Astroでは `<> </>` 表記を使用でき、組み込みの `<Fragment />` コンポーネントを提供しています。このコンポーネントは、HTML文字列を注入するために [`set:*` ディレクティブ](/ja/reference/directives-reference/#sethtml) を追加する際に、ラッパー要素を避けるのに役立ちます。
+Astroでは`<> </>`表記を使用でき、組み込みの`<Fragment />`コンポーネントを提供しています。このコンポーネントは、HTML文字列を注入するために [`set:*`ディレクティブ](/ja/reference/directives-reference/#sethtml) を追加する際に、ラッパー要素を避けるのに役立ちます。
 
-次の例では、`<Fragment />` コンポーネントを使用して段落テキストをレンダリングします。
+次の例では、`<Fragment />`コンポーネントを使用して段落テキストをレンダリングします。
 
 ```astro title="src/components/SetHtml.astro" "Fragment"
 ---
@@ -176,7 +176,7 @@ HTMLスタイルのコメントはブラウザのDOMに含まれますが、JS�
 
 ### `Astro.slots`
 
-`Astro.slots` には、Astroコンポーネントのスロットの子要素を変更するためのユーティリティ関数が含まれています。
+`Astro.slots`には、Astroコンポーネントのスロットの子要素を変更するためのユーティリティ関数が含まれています。
 
 #### `Astro.slots.has()`
 
@@ -185,7 +185,7 @@ HTMLスタイルのコメントはブラウザのDOMに含まれますが、JS�
 **Type:** `(slotName: string) => boolean`
 </p>
 
-`Astro.slots.has()` を使用して、特定のスロット名のコンテンツが存在するかどうかを確認できます。これは、スロットのコンテンツをラップしたいが、スロットが使用されている場合にのみラッパー要素をレンダリングしたい場合に便利です。
+`Astro.slots.has()`を使用して、特定のスロット名のコンテンツが存在するかどうかを確認できます。これは、スロットのコンテンツをラップしたいが、スロットが使用されている場合にのみラッパー要素をレンダリングしたい場合に便利です。
 
 ```astro  title="src/pages/index.astro"
 ---
@@ -207,7 +207,7 @@ HTMLスタイルのコメントはブラウザのDOMに含まれますが、JS�
 **Type:** `(slotName: string, args?: any[]) => Promise<string>`
 </p>
 
-`Astro.slots.render()` を使用して、スロットのコンテンツをHTML文字列として非同期にレンダリングできます。
+`Astro.slots.render()`を使用して、スロットのコンテンツをHTML文字列として非同期にレンダリングできます。
 
 ```astro
 ---
@@ -217,12 +217,12 @@ const html = await Astro.slots.render('default');
 ```
 
 :::note
-これは高度なユースケースです！ほとんどの場合、[`<slot />` 要素](/ja/basics/astro-components/#スロット)を使用してスロットのコンテンツをレンダリングする方が簡単です。
+これは高度なユースケースです！ほとんどの場合、[`<slot />`要素](/ja/basics/astro-components/#スロット)を使用してスロットのコンテンツをレンダリングする方が簡単です。
 :::
 
-`Astro.slots.render()` は、2番目のオプションの引数として、任意の子関数に転送されるパラメータの配列を受け取ります。これは、カスタムユーティリティコンポーネントに役立ちます。
+`Astro.slots.render()`は、2番目のオプションの引数として、任意の子関数に転送されるパラメータの配列を受け取ります。これは、カスタムユーティリティコンポーネントに役立ちます。
 
-たとえば、この `<Shout />` コンポーネントは、`message` propを大文字に変換し、デフォルトスロットに渡します。
+たとえば、この`<Shout />`コンポーネントは、`message` propを大文字に変換し、デフォルトスロットに渡します。
 
 ```astro title="src/components/Shout.astro" "await Astro.slots.render('default', [message])"
 ---
@@ -235,7 +235,7 @@ if (Astro.slots.has('default')) {
 <Fragment set:html={html} />
 ```
 
-`<Shout />` の子として渡されたコールバック関数は、すべて大文字の `message` パラメータを受け取ります。
+`<Shout />`の子として渡されたコールバック関数は、すべて大文字の`message`パラメータを受け取ります。
 
 ```astro title="src/pages/index.astro"
 ---
@@ -248,7 +248,7 @@ import Shout from "../components/Shout.astro";
 <!-- <div>SLOTS!</div> としてレンダリングされます -->
 ```
 
-コールバック関数は、`slot` 属性を持つHTML要素タグでラップすることで、名前付きスロットに渡すことができます。この要素はコールバックを名前付きスロットに転送するためにのみ使用され、ページにはレンダリングされません。
+コールバック関数は、`slot`属性を持つHTML要素タグでラップすることで、名前付きスロットに渡すことができます。この要素はコールバックを名前付きスロットに転送するためにのみ使用され、ページにはレンダリングされません。
 
 ```astro
 <Shout message="slots!">
@@ -258,11 +258,11 @@ import Shout from "../components/Shout.astro";
 </Shout>
 ```
 
-ラッパータグには、標準のHTML要素またはコンポーネントとして解釈されない小文字のタグ（例：`<Fragment />` の代わりに `<fragment>`）を使用します。HTMLの `<slot>` 要素はAstroのスロットとして解釈されるため、使用しないでください。
+ラッパータグには、標準のHTML要素またはコンポーネントとして解釈されない小文字のタグ（例：`<Fragment />`の代わりに`<fragment>`）を使用します。HTMLの`<slot>`要素はAstroのスロットとして解釈されるため、使用しないでください。
 
 ### `Astro.self`
 
-`Astro.self` を使用すると、Astroコンポーネントを再帰的に呼び出すことができます。この動作により、コンポーネントテンプレート内で `<Astro.self>` を使用して、Astroコンポーネントを自身の中からレンダリングできます。これは、大規模なデータストアやネストされたデータ構造を反復処理するのに役立ちます。
+`Astro.self`を使用すると、Astroコンポーネントを再帰的に呼び出すことができます。この動作により、コンポーネントテンプレート内で`<Astro.self>`を使用して、Astroコンポーネントを自身の中からレンダリングできます。これは、大規模なデータストアやネストされたデータ構造を反復処理するのに役立ちます。
 
 ```astro title="src/components/NestedList.astro" {14}
 ---

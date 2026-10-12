@@ -76,7 +76,7 @@ Astroは`/src/pages/`にあるMarkdown (`.md`) ファイルも、最終的なWeb
 ブログ記事や商品アイテムなど、同じ構造を持つMarkdownファイルのディレクトリには、ページではなく[コンテンツコレクション](/ja/guides/content-collections/)の作成を検討してください。
 :::
 
-ページレイアウトは[Markdownファイル](#markdownmdxページ)に対して特に有効です。Markdownファイルは特別な `layout`というフロントマターのプロパティを使用して、Markdownコンテンツを`<html>...</html>`ページドキュメントにラップする [レイアウトコンポーネント](/ja/basics/layouts/)を指定できます。
+ページレイアウトは[Markdownファイル](#markdownmdxページ)に対して特に有効です。Markdownファイルは特別な`layout`というフロントマターのプロパティを使用して、Markdownコンテンツを`<html>...</html>`ページドキュメントにラップする [レイアウトコンポーネント](/ja/basics/layouts/)を指定できます。
 
 ```md {3}
 ---
@@ -149,7 +149,7 @@ const { error } = Astro.props;
 
 ただし、これらは特別な`src/pages/`ディレクトリに配置されているため、生成されたHTMLはそのファイルパスに対応するURLで利用できます。これにより、レンダリングライブラリ(例：[htmx](https://htmx.org/), [Stimulus](https://stimulus.hotwired.dev/), [jQuery](https://jquery.com/)など)がクライアント上でアクセスし、ブラウザの更新やページナビゲーションを行わずにHTMLのセクションを動的に読み込むことができます。
 
-パーシャルをレンダリングライブラリと組み合わせると、Astroで動的コンテンツを構築するための[アイランド](/ja/concepts/islands/)や[`<script>` タグ](/ja/guides/client-side-scripts/)の代替手段が提供されます。
+パーシャルをレンダリングライブラリと組み合わせると、Astroで動的コンテンツを構築するための[アイランド](/ja/concepts/islands/)や[`<script>`タグ](/ja/guides/client-side-scripts/)の代替手段が提供されます。
 
 値をエクスポートできるページファイル(例`.astro`、`.mdx`)は、パーシャルファイルとしてマークできます。
 

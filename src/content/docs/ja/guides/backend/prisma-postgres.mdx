@@ -38,8 +38,8 @@ npx prisma init --db --output ./generated
 Prisma Postgresデータベースのセットアップ中に、いくつかの質問に答える必要があります。現在地から最も近いリージョンを選択し、「My Astro Project」のような覚えやすいデータベース名を付けてください。
 
 これにより、以下のファイルが作成されます。
-- `schema.prisma` ファイルを含む `prisma/` ディレクトリ
-- すでに `DATABASE_URL` が設定された `.env` ファイル
+- `schema.prisma`ファイルを含む`prisma/`ディレクトリ
+- すでに`DATABASE_URL`が設定された`.env`ファイル
 
 ### モデルの定義
 
@@ -78,7 +78,7 @@ npx prisma generate
 
 ### マイグレーションファイルの生成
 
-以下のコマンドを実行して、データベーステーブルを作成し、スキーマからPrisma Clientを生成します。これにより、マイグレーション履歴ファイルを含む `prisma/migrations/` ディレクトリも作成されます。
+以下のコマンドを実行して、データベーステーブルを作成し、スキーマからPrisma Clientを生成します。これにより、マイグレーション履歴ファイルを含む`prisma/migrations/`ディレクトリも作成されます。
 
 ```bash
 npx prisma migrate dev --name init
@@ -86,7 +86,7 @@ npx prisma migrate dev --name init
 
 ### Prisma Clientの作成
 
-`/src/lib` 内に `prisma.ts` ファイルを作成します。このファイルでPrisma Clientインスタンスを初期化してエクスポートすることで、Astroプロジェクト全体でデータベースクエリを実行できるようになります。
+`/src/lib`内に`prisma.ts`ファイルを作成します。このファイルでPrisma Clientインスタンスを初期化してエクスポートすることで、Astroプロジェクト全体でデータベースクエリを実行できるようになります。
 
 ```typescript title="src/lib/prisma.ts"
 import { PrismaPg } from '@prisma/adapter-pg';
@@ -101,7 +101,7 @@ export default prisma;
 
 ### データのクエリと表示
 
-以下の例では、Prisma Clientを使用して公開済み（`published: true`）の投稿のみを `id` 順に取得し、そのタイトルと内容をAstroテンプレートに表示しています。
+以下の例では、Prisma Clientを使用して公開済み（`published: true`）の投稿のみを`id`順に取得し、そのタイトルと内容をAstroテンプレートに表示しています。
 
 ```astro title="src/pages/posts.astro" {2, 4-7}
 ---
@@ -145,7 +145,7 @@ const posts = await prisma.post.findMany({
 
 この例では、 [`Node.js用のPostgreSQLクライアントであるpg`](https://github.com/brianc/node-postgres) を使用して、直接TCP接続を行います。
 
-以下のコマンドを実行して `pg` パッケージをインストールします。
+以下のコマンドを実行して`pg`パッケージをインストールします。
 
 ```bash
 npm install pg
@@ -153,7 +153,7 @@ npm install pg
 
 ### データベースへのクエリ実行
 
-`pg` クライアントに接続文字列を渡し、SQLサーバーと通信してデータベースからデータを取得します。
+`pg`クライアントに接続文字列を渡し、SQLサーバーと通信してデータベースからデータを取得します。
 
 以下の例は、テーブルを作成してデータを挿入するもので、クエリURLとTCP接続の検証に使用できます。
 

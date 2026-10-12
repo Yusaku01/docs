@@ -9,7 +9,7 @@ import ReadMore from '~/components/ReadMore.astro'
 **レイアウト**は、ページテンプレートのような再利用可能なUI構造を作成するために使用される[Astroコンポーネント](/ja/basics/astro-components/)です。
 
 ヘッダーやナビゲーションバー、フッターなど、ページ間で共有される共通のUIを提供するAstroコンポーネントには、慣習的に「レイアウト」という用語が使われます。典型的なAstroのレイアウトコンポーネントは、[Astro、Markdown、またはMDXのページ](/ja/basics/astro-pages/)に以下を提供します。
-- **ページシェル**（`<html>`, `<head>`, `<body>` タグ）
+- **ページシェル**（`<html>`, `<head>`, `<body>`タグ）
 - 個々のページコンテンツが挿入される場所を指定する[**`<slot />`**](/ja/basics/astro-components/#スロット)
 
 ただし、レイアウトコンポーネントに何か特別なところがあるわけではありません。他のAstroコンポーネントと同様に、[propsを受け取り](/ja/basics/astro-components/#コンポーネントのprops)、[他のコンポーネントをインポートして使用](/ja/basics/astro-components/#コンポーネント構造)できます。[UIフレームワークコンポーネント](/ja/guides/framework-components/)や[クライアントサイドスクリプト](/ja/guides/client-side-scripts/)も含められます。ページ全体のシェルを提供する必要すらなく、代わりに部分的なUIテンプレートとしても使用可能です。
@@ -243,7 +243,7 @@ const { title, fancyJsHelper } = Astro.props;
 </html>
 ```
 
-レイアウトを使用する場合(frontmatterの`layout`プロパティを使用するか、レイアウトをインポートするかに関わらず)、レイアウトに `<meta charset="utf-8">` タグを含める必要があります。AstroはMDXページにこのタグを自動的に追加しなくなったためです。
+レイアウトを使用する場合(frontmatterの`layout`プロパティを使用するか、レイアウトをインポートするかに関わらず)、レイアウトに`<meta charset="utf-8">`タグを含める必要があります。AstroはMDXページにこのタグを自動的に追加しなくなったためです。
 
 <ReadMore>[Markdownのガイド](/ja/guides/markdown-content/)でAstroのMarkdownとMDXサポートについてもっと学ぶ。</ReadMore>
 

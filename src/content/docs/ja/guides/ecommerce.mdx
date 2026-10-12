@@ -23,7 +23,7 @@ Astroでは決済APIからリンク決済まで様々なE-commerceのオプシ�
 以下に記載している例は、Lemon Sqeezyで「今すぐ購入」リンクをAstroページに追加する例です。ボタンをクリックすることでユーザーは単一の決済を行うことができます。
 
 <Steps>
-1. 下に記載されている`<script>`タグをページの`head`、または `body`要素に追加します:
+1. 下に記載されている`<script>`タグをページの`head`、または`body`要素に追加します:
 
     ```html title="src/pages/my-product-page.astro"
     <script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
@@ -68,7 +68,7 @@ Lemon.jsは[オーバーレイの制御](https://docs.lemonsqueezy.com/help/lemo
     </script>
     ```
 
-2. 任意の要素をPaddleの決済ボタンに変えるために `paddle_button`クラスを適応します:
+2. 任意の要素をPaddleの決済ボタンに変えるために`paddle_button`クラスを適応します:
 
     ```html title="src/pages/my-product-page.astro"
     <a href="#" class="paddle_button">今すぐ購入</a>
@@ -195,7 +195,7 @@ Snipcartの利用を簡単にできる`astro-snipcart`コミュニティパッ�
 
 - [`@lloydjatkinson/astro-snipcart` Astro テンプレート](https://astro-snipcart.vercel.app/):このAstroテンプレートは追加で完全なe-commerceソルーションのためのデザインシステムが含まれています。詳細はAstroSnipcartのドキュメントをご覧ください。ドキュメントでは、Snipcart APIをAstroでネイティブに使用できる方法を提供することが[`astro-snipcart`を作成した動機](https://astro-snipcart.vercel.app/motivation)だったと説明されています。
 
-- [`@Adammatthiesen/astro-snipcart` インテグレーション](https://github.com/Adammatthiesen/astro-snipcart): このインテグレーションは`astro-snipcart`テーマから大きな影響を受けて作成されたインテグレーションです。使用することで、既存のプロジェクトに、商品を追加したりカートを管理することができるAstroコンポーネント(またはVueコンポーネント)を追加します。詳細は[完全なチュートリアル](https://matthiesen.xyz/blog/getting-started-with-my-astro-snipcart-addon)を確認してください。
+- [`@Adammatthiesen/astro-snipcart`インテグレーション](https://github.com/Adammatthiesen/astro-snipcart): このインテグレーションは`astro-snipcart`テーマから大きな影響を受けて作成されたインテグレーションです。使用することで、既存のプロジェクトに、商品を追加したりカートを管理することができるAstroコンポーネント(またはVueコンポーネント)を追加します。詳細は[完全なチュートリアル](https://matthiesen.xyz/blog/getting-started-with-my-astro-snipcart-addon)を確認してください。
 
 ## コミュニティリソース
 

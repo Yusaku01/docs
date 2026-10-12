@@ -35,7 +35,7 @@ turso db show <database-name> --url
 turso db tokens create <database-name>
 ```
 
-上記の両方のコマンドからの出力を、プロジェクトのルートにある `.env` ファイルに追加します。このファイルが存在しない場合は、作成してください。
+上記の両方のコマンドからの出力を、プロジェクトのルートにある`.env`ファイルに追加します。このファイルが存在しない場合は、作成してください。
 
 ```ini title=".env"
 TURSO_DATABASE_URL=libsql://...
@@ -43,12 +43,12 @@ TURSO_AUTH_TOKEN=
 ```
 
 :::caution
-これらのプライベートな[環境変数](/ja/guides/environment-variables/)を作成する際は、`PUBLIC_` プレフィックスを使用しないでください。これらの値がクライアントに公開されてしまいます。
+これらのプライベートな[環境変数](/ja/guides/environment-variables/)を作成する際は、`PUBLIC_`プレフィックスを使用しないでください。これらの値がクライアントに公開されてしまいます。
 :::
 
 ### LibSQLクライアントのインストール
 
-TursoをAstroに接続するために `@libsql/client` をインストールします。
+TursoをAstroに接続するために`@libsql/client`をインストールします。
 
 <PackageManagerTabs>
   <Fragment slot="npm">
@@ -70,7 +70,7 @@ TursoをAstroに接続するために `@libsql/client` をインストールし�
 
 ### 新しいクライアントの初期化
 
-`src` フォルダに `turso.ts` ファイルを作成し、`TURSO_DATABASE_URL` と `TURSO_AUTH_TOKEN` を渡して `createClient` を呼び出します。
+`src`フォルダに`turso.ts`ファイルを作成し、`TURSO_DATABASE_URL`と`TURSO_AUTH_TOKEN`を渡して`createClient`を呼び出します。
 
 ```ts title="src/turso.ts"
 import { createClient } from "@libsql/client/web";
@@ -83,9 +83,9 @@ export const turso = createClient({
 
 ## データベースのクエリ
 
-データベースから情報にアクセスするには、任意の `.astro` コンポーネント内で `turso` をインポートし、[SQL クエリを実行](https://docs.turso.tech/sdk/ts/reference#simple-query)します。
+データベースから情報にアクセスするには、任意の`.astro`コンポーネント内で`turso`をインポートし、[SQL クエリを実行](https://docs.turso.tech/sdk/ts/reference#simple-query)します。
 
-次の例では、テーブルからすべての `posts` を取得し、`<BlogIndex />` コンポーネントでタイトルのリストを表示します。
+次の例では、テーブルからすべての`posts`を取得し、`<BlogIndex />`コンポーネントでタイトルのリストを表示します。
 
 ```astro title="src/components/BlogIndex.astro"
 ---
@@ -103,9 +103,9 @@ const { rows } = await turso.execute('SELECT * FROM posts')
 
 ### SQLプレースホルダー
 
-`execute()` メソッドは、`slug` やページネーションなど、[SQL文に変数を渡すオブジェクト](https://docs.turso.tech/sdk/ts/reference#placeholders)を受け取ることができます。
+`execute()`メソッドは、`slug`やページネーションなど、[SQL文に変数を渡すオブジェクト](https://docs.turso.tech/sdk/ts/reference#placeholders)を受け取ることができます。
 
-次の例では、`slug` が `Astro.params` から取得した値と一致する `posts` テーブルから単一のエントリを取得し、投稿のタイトルを表示します。
+次の例では、`slug`が`Astro.params`から取得した値と一致する`posts`テーブルから単一のエントリを取得し、投稿のタイトルを表示します。
 
 ```astro title="src/pages/index.astro"
 ---

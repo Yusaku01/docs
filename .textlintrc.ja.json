@@ -1,6 +1,11 @@
 {
   "plugins": ["mdx"],
   "rules": {
-    "preset-ja-spacing": true
+    "preset-ja-spacing": {
+      "ja-space-around-code": {
+        "before": false,
+        "after": false
+      }
+    }
   }
 }
