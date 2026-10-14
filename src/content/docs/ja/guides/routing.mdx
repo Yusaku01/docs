@@ -144,7 +144,7 @@ const { path } = Astro.params;
 
 #### 複数レベルの動的ページの例
 
-以下の例は、レストパラメータ（`[...slug]`）と`getStaticPaths()`の[`props`](/ja/reference/routing-reference/#data-passing-with-props)機能を使用して、異なる深さのスラグに対してページを生成します。
+以下の例は、レストパラメータ（`[...slug]`）と`getStaticPaths()`の[`props`](/ja/reference/routing-reference/#propsによるデータの受け渡し)機能を使用して、異なる深さのスラグに対してページを生成します。
 
 ```astro title="src/pages/[...slug].astro"
 ---
@@ -522,7 +522,7 @@ const { page } = Astro.props;
 {page.url.last ? <a href={page.url.last}>最後</a> : null}
 ```
 
-<ReadMore>[ページネーションの`page`](/ja/reference/routing-reference/#the-pagination-page-prop)についてもっと学ぶ。</ReadMore>
+<ReadMore>[ページネーションの`page`](/ja/reference/routing-reference/#ページネーションのpageプロパティ)についてもっと学ぶ。</ReadMore>
 
 ### ネストされたページネーション
 
