@@ -1856,7 +1856,7 @@ export default defineConfig({
 
 <p>
 
-**型:** `Object`<br />
+**型:** `{entrypoint: 'astro/assets/services/sharp' | string, config: Record<string, any>} | {build: ImageServiceConfig, runtime: ImageServiceConfig}`<br />
 **デフォルト:** `{entrypoint: 'astro/assets/services/sharp', config?: {}}`<br />
 <Since v="2.1.0" />
 </p>
@@ -1890,6 +1890,26 @@ export default defineConfig({
   },
 });
 ```
+
+Astro v7.4以降、`build`と`runtime`に異なるサービスを設定することもできます。`build`サービスは、サイトのビルド時に事前レンダリングされるページの画像を最適化し、開発時にも使用されます。`runtime`サービスは、デプロイしたサイトのオンデマンドレンダリングされるページと[画像エンドポイント](#imageendpoint)の画像を処理します。
+
+次の例では、事前レンダリングされるページの画像をSharpで最適化し、オンデマンドレンダリングされるページには画像CDNを使用します。
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  image: {
+    service: {
+      build: { entrypoint: 'astro/assets/services/sharp' },
+      runtime: { entrypoint: 'my-image-cdn-service' },
+    },
+  },
+});
+```
+
+事前レンダリングされるページの画像は、常にビルド中にNodeで生成されます。そのため、アダプターが別のランタイム（Cloudflareの`workerd`など）でページを事前レンダリングする場合でも、`build`サービスとしてSharpを使用できます。
 
 #### image.service.config.limitInputPixels
 
