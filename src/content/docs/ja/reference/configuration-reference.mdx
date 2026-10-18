@@ -2145,6 +2145,8 @@ export default defineConfig({
 
 レスポンシブ画像の生成に使用するブレークポイントです。`layout`に値を設定する必要があります。通常は一覧全体を使用せず、ソースと出力サイズに応じて絞り込まれます。使用するデフォルト値は、画像サービスがローカルかリモートかによって異なります。リモートサービスでは必要なサイズだけが生成されるため、より包括的な一覧を使用します。ローカルサービスでは生成する画像数を減らすため、短い一覧を使用します。
 
+<span id="markdown-options" />
+
 ## Markdownのオプション
 
 
@@ -2268,7 +2270,7 @@ export default defineConfig({
 :::caution[非推奨]
 このプロパティは非推奨であり、将来のメジャーバージョンで削除されます。代わりに、設定した[`markdown.processor`](#markdownprocessor)へプラグインを渡してください。
 
-Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[プラグインの使用](/ja/guides/markdown-content/#remarkおよびrehypeプラグインの利用)について確認できます。
+Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[プラグインの使用](/ja/guides/markdown-content/#markdownプロセッサプラグイン)について確認できます。
 :::
 
 <p>
@@ -2296,7 +2298,7 @@ export default defineConfig({
 :::caution[非推奨]
 このプロパティは非推奨であり、将来のメジャーバージョンで削除されます。代わりに、設定した[`markdown.processor`](#markdownprocessor)へプラグインを渡してください。
 
-Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[プラグインの使用](/ja/guides/markdown-content/#remarkおよびrehypeプラグインの利用)について確認できます。
+Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[プラグインの使用](/ja/guides/markdown-content/#markdownプロセッサプラグイン)について確認できます。
 :::
 
 <p>
@@ -2324,7 +2326,7 @@ export default defineConfig({
 :::caution[非推奨]
 このプロパティは非推奨であり、将来のメジャーバージョンで削除されます。代わりに、設定した[`markdown.processor`](#markdownprocessor)へ`gfm`を渡してください。
 
-Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[GitHub Flavored Markdownの使用](/ja/guides/markdown-content/#sätteriプラグインと機能の利用)について確認できます。
+Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[GitHub Flavored Markdownの使用](/ja/guides/markdown-content/#github風のmarkdown)について確認できます。
 :::
 
 <p>
@@ -2353,7 +2355,7 @@ export default defineConfig({
 :::caution[非推奨]
 このプロパティは非推奨であり、将来のメジャーバージョンで削除されます。代わりに、設定した[`markdown.processor`](#markdownprocessor)へ渡してください。`unified()`では`smartypants`を、`satteri()`では`smartPunctuation`を使用します。
 
-Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[スマート句読点の使用](/ja/guides/markdown-content/#sätteriプラグインと機能の利用)について確認できます。
+Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[スマート句読点の使用](/ja/guides/markdown-content/#スマート句読点)について確認できます。
 :::
 
 <p>
@@ -2377,7 +2379,7 @@ Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown
 
 脚注を設定するには、代わりに`unified()`プロセッサーへ`remarkRehype`を、または`satteri()`プロセッサーへ`gfm.footnotes`を渡します。その他の`remark-rehype`オプションは、`unified()`を使用する場合にのみサポートされます。
 
-Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[組み込み機能の使用](/ja/guides/markdown-content/#sätteriプラグインと機能の利用)について確認できます。
+Markdownガイドで、[Markdownプロセッサーの設定](/ja/guides/markdown-content/#markdownプロセッサの選択)と[組み込み機能の使用](/ja/guides/markdown-content/#標準機能)について確認できます。
 :::
 
 <p>
