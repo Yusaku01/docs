@@ -133,6 +133,12 @@ const { error } = Astro.props;
 
 `error`propから機密情報を漏洩させないため、まずエラーを評価し、適切な内容を返すことを検討してください。例えば、エラーのスタックは表示すべきでありません。スタックにはサーバー上のコード構造に関する情報が含まれているためです。
 
+{/* EN: ## Custom 3xx Redirect Page */}
+## カスタム3xxリダイレクトページ
+
+{/* EN: To customize the HTML page Astro generates for redirects in static builds, see the [experimental redirect page feature](/en/reference/experimental-flags/redirect-page/). */}
+静的ビルドでリダイレクト用にAstroが生成するHTMLページをカスタマイズするには、[実験的なリダイレクトページ機能](/ja/reference/experimental-flags/redirect-page/)を参照してください。
+
 ## パーシャルページ
 
 <p><Since v="3.4.0" /></p>
