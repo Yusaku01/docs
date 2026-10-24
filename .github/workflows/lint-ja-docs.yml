@@ -3,22 +3,15 @@
 name: Lint Japanese Documentation
 
 on:
-  workflow_dispatch:
   push:
     branches: [main]
     paths:
       - 'src/content/docs/ja/**'
       - '.textlintrc.ja.json'
-      - '.github/workflows/lint-ja-docs.yml'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
   pull_request:
     paths:
       - 'src/content/docs/ja/**'
       - '.textlintrc.ja.json'
-      - '.github/workflows/lint-ja-docs.yml'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
 
 permissions: {}
 
@@ -38,6 +31,8 @@ jobs:
 
       - name: Install Tools & Dependencies
         uses: ./.github/actions/install
+        with:
+          node-version: 20 
 
       - name: Run textlint
         run: pnpm run lint:ja --format github
