@@ -9,10 +9,16 @@ on:
     paths:
       - 'src/content/docs/ja/**'
       - '.textlintrc.ja.json'
+      - '.github/workflows/lint-ja-docs.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
   pull_request:
     paths:
       - 'src/content/docs/ja/**'
       - '.textlintrc.ja.json'
+      - '.github/workflows/lint-ja-docs.yml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
 
 permissions: {}
 
@@ -32,27 +38,6 @@ jobs:
 
       - name: Install Tools & Dependencies
         uses: ./.github/actions/install
-        with:
-          node-version: 20 
 
       - name: Run textlint
-        id: textlint
-        run: |
-          echo "::group::Running textlint on Japanese documentation"
-          set +e
-          pnpm run lint:ja 2>&1 | tee textlint-output.txt
-          TEXTLINT_EXIT_CODE=${PIPESTATUS[0]}
-          set -e
-          echo "::endgroup::"
-
-          echo "exit_code=$TEXTLINT_EXIT_CODE" >> $GITHUB_OUTPUT
-          exit $TEXTLINT_EXIT_CODE
-        continue-on-error: true
-
-      - name: Report textlint results
-        if: always() && steps.textlint.outputs.exit_code != '0'
-        run: |
-          echo "::error::textlint found issues in Japanese documentation"
-          cat textlint-output.txt
-          echo "To fix these issues locally, run: pnpm run lint:ja"
-          exit 1
+        run: pnpm run lint:ja --format github
