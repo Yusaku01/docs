@@ -1,0 +1,40 @@
+name: Linkcheck benchmark
+on:
+  pull_request:
+    paths:
+      - 'scripts/lib/linkcheck/**'
+      - '.github/benchmarks/**'
+      - '.github/workflows/linkcheck-benchmark.yml'
+permissions:
+  contents: read
+concurrency:
+  group: linkcheck-benchmark-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  # This ID also selects the production site URL in astro.config.ts.
+  linkcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NODE_OPTIONS: '--max_old_space_size=8192'
+      LINKCHECK_BASELINE: .github/benchmarks/baseline.ts
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - uses: ./.github/actions/install
+      - name: Extract the baseline from the PR base
+        run: |
+          git fetch --no-tags --depth=1 origin "$BASE_SHA"
+          git show "$BASE_SHA:scripts/lib/linkcheck/base/page.ts" > "$LINKCHECK_BASELINE"
+      - name: Verify extraction and check equivalence
+        run: node --experimental-transform-types .github/benchmarks/verify-linkcheck.mjs
+      - name: Build the shared input once
+        run: SKIP_OG=true pnpm build
+      - name: Compare on the same runner and build output
+        run: node --experimental-transform-types .github/benchmarks/linkcheck.mjs
+      - name: Upload measurements
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: linkcheck-benchmark
+          path: .github/benchmarks/results.json

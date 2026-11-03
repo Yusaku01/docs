@@ -79,7 +79,7 @@ export class HtmlPage {
 		this.pathname = pathname;
 
 		// Provide commonly used data as properties
-		this.anchors = DomUtils.getElementsByTagName('a', parser.dom, true).map((el) => ({
+		this.anchors = parser.anchors.map((el) => ({
 			// Pass the strings through Buffer to allow Node to reallocate them into independent memory
 			// instead of using slices of the original large string containing the full HTML document.
 			//
@@ -94,34 +94,25 @@ export class HtmlPage {
 
 		// Build a list of hashes that can be used as URL fragments to jump to parts of the page
 		const anchorNames = this.anchors.map((el) => el.name).filter((name) => name !== undefined);
-		const ids = parser
-			.findAll((el) => Boolean(el.attribs.id))
+		const ids = parser.ids
 			// Same reason as above.
 			.map((el) => Buffer.from(el.attribs.id).toString());
 		this.hashes = [...anchorNames, ...ids].map((name) => `#${name}`);
 
 		// Check if the page redirects somewhere else using meta refresh
-		const metaRefreshElement = parser.findFirst(
-			(el) =>
-				el.tagName.toLowerCase() === 'meta' && el.attribs['http-equiv']?.toLowerCase() === 'refresh'
-		);
+		const metaRefreshElement = parser.refresh;
 		const metaRefreshContent = metaRefreshElement?.attribs['content'];
 		const metaRefreshMatches = metaRefreshContent?.match(/^([0-9]+)\s*;\s*url\s*=\s*(.+)$/i);
 		this.redirectTargetUrl = metaRefreshMatches ? new URL(metaRefreshMatches[2], this.href) : null;
 		this.isRedirect = Boolean(this.redirectTargetUrl);
 
 		// Get the page's canonical URL (if any)
-		const linkCanonicalElement = parser.findFirst(
-			(el) =>
-				el.tagName.toLowerCase() === 'link' && el.attribs['rel']?.toLowerCase() === 'canonical'
-		);
+		const linkCanonicalElement = parser.canonical;
 		this.canonicalUrl =
 			(linkCanonicalElement && new URL(linkCanonicalElement.attribs['href'])) || null;
 
 		// Attempt to find the page's main content element
-		const mainContent =
-			parser.findFirst((el) => el.tagName.toLowerCase() === 'main') ||
-			parser.findFirst((el) => el.tagName.toLowerCase() === 'body');
+		const mainContent = parser.main || parser.body;
 
 		this.hasContent = Boolean(mainContent);
 
@@ -162,14 +153,24 @@ export class HtmlPage {
 }
 
 class DocumentParser {
-	constructor(public readonly dom: Document) {}
-
-	findFirst(test: (elem: Element) => boolean) {
-		return DomUtils.findOne(test, this.dom.children);
-	}
-
-	findAll(test: (elem: Element) => boolean) {
-		return DomUtils.findAll(test, this.dom.children);
+	readonly anchors: Element[] = [];
+	readonly ids: Element[];
+	refresh: Element | null = null;
+	canonical: Element | null = null;
+	main: Element | null = null;
+	body: Element | null = null;
+	constructor(dom: Document) {
+		this.ids = DomUtils.findAll((el) => {
+			const tag = el.tagName.toLowerCase();
+			if (tag === 'a') this.anchors.push(el);
+			if (tag === 'meta' && el.attribs['http-equiv']?.toLowerCase() === 'refresh' && !this.refresh)
+				this.refresh = el;
+			if (tag === 'link' && el.attribs.rel?.toLowerCase() === 'canonical' && !this.canonical)
+				this.canonical = el;
+			if (tag === 'main' && !this.main) this.main = el;
+			if (tag === 'body' && !this.body) this.body = el;
+			return Boolean(el.attribs.id);
+		}, dom.children);
 	}
 
 	findParent(start: Element, test: (elem: Element) => boolean) {
