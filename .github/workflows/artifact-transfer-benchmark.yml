@@ -1,0 +1,233 @@
+name: Artifact transfer benchmark
+on:
+  pull_request:
+    paths:
+      - '.github/benchmarks/artifact-transfer.py'
+      - '.github/workflows/artifact-transfer-benchmark.yml'
+permissions:
+  contents: read
+concurrency:
+  group: artifact-transfer-benchmark-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  transfer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NODE_OPTIONS: '--max_old_space_size=8192'
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - uses: ./.github/actions/install
+      - name: Check compression tools
+        run: |
+          tar --version
+          gzip --version
+          zstd --version
+      - name: Build preview input including OG images
+        run: pnpm build
+      - name: Inventory and fingerprint source files
+        run: python3 .github/benchmarks/artifact-transfer.py inventory
+      - name: Pack r1-zip
+        run: python3 .github/benchmarks/artifact-transfer.py prepare r1-zip zip
+      - name: Upload r1-zip
+        id: upload_r1_zip
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: r1-zip
+          path: |
+            dist/
+            worker.js
+            wrangler.jsonc
+          compression-level: 6
+          retention-days: 1
+          if-no-files-found: error
+      - name: Download r1-zip
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ steps.upload_r1_zip.outputs.artifact-id }}
+          path: .artifact-benchmark/downloads/r1-zip
+      - name: Unpack and verify r1-zip
+        env:
+          ARTIFACT_ID: ${{ steps.upload_r1_zip.outputs.artifact-id }}
+        run: python3 .github/benchmarks/artifact-transfer.py verify r1-zip
+      - name: Pack r1-gzip
+        run: python3 .github/benchmarks/artifact-transfer.py prepare r1-gzip gzip
+      - name: Upload r1-gzip
+        id: upload_r1_gzip
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          path: .artifact-benchmark/r1-gzip.tar.gz
+          archive: false
+          retention-days: 1
+          if-no-files-found: error
+      - name: Download r1-gzip
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ steps.upload_r1_gzip.outputs.artifact-id }}
+          path: .artifact-benchmark/downloads/r1-gzip
+          skip-decompress: true
+      - name: Unpack and verify r1-gzip
+        env:
+          ARTIFACT_ID: ${{ steps.upload_r1_gzip.outputs.artifact-id }}
+        run: python3 .github/benchmarks/artifact-transfer.py verify r1-gzip
+      - name: Pack r1-zstd
+        run: python3 .github/benchmarks/artifact-transfer.py prepare r1-zstd zstd
+      - name: Upload r1-zstd
+        id: upload_r1_zstd
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          path: .artifact-benchmark/r1-zstd.tar.zst
+          archive: false
+          retention-days: 1
+          if-no-files-found: error
+      - name: Download r1-zstd
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ steps.upload_r1_zstd.outputs.artifact-id }}
+          path: .artifact-benchmark/downloads/r1-zstd
+          skip-decompress: true
+      - name: Unpack and verify r1-zstd
+        env:
+          ARTIFACT_ID: ${{ steps.upload_r1_zstd.outputs.artifact-id }}
+        run: python3 .github/benchmarks/artifact-transfer.py verify r1-zstd
+      - name: Pack r2-gzip
+        run: python3 .github/benchmarks/artifact-transfer.py prepare r2-gzip gzip
+      - name: Upload r2-gzip
+        id: upload_r2_gzip
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          path: .artifact-benchmark/r2-gzip.tar.gz
+          archive: false
+          retention-days: 1
+          if-no-files-found: error
+      - name: Download r2-gzip
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ steps.upload_r2_gzip.outputs.artifact-id }}
+          path: .artifact-benchmark/downloads/r2-gzip
+          skip-decompress: true
+      - name: Unpack and verify r2-gzip
+        env:
+          ARTIFACT_ID: ${{ steps.upload_r2_gzip.outputs.artifact-id }}
+        run: python3 .github/benchmarks/artifact-transfer.py verify r2-gzip
+      - name: Pack r2-zstd
+        run: python3 .github/benchmarks/artifact-transfer.py prepare r2-zstd zstd
+      - name: Upload r2-zstd
+        id: upload_r2_zstd
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          path: .artifact-benchmark/r2-zstd.tar.zst
+          archive: false
+          retention-days: 1
+          if-no-files-found: error
+      - name: Download r2-zstd
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ steps.upload_r2_zstd.outputs.artifact-id }}
+          path: .artifact-benchmark/downloads/r2-zstd
+          skip-decompress: true
+      - name: Unpack and verify r2-zstd
+        env:
+          ARTIFACT_ID: ${{ steps.upload_r2_zstd.outputs.artifact-id }}
+        run: python3 .github/benchmarks/artifact-transfer.py verify r2-zstd
+      - name: Pack r2-zip
+        run: python3 .github/benchmarks/artifact-transfer.py prepare r2-zip zip
+      - name: Upload r2-zip
+        id: upload_r2_zip
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: r2-zip
+          path: |
+            dist/
+            worker.js
+            wrangler.jsonc
+          compression-level: 6
+          retention-days: 1
+          if-no-files-found: error
+      - name: Download r2-zip
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ steps.upload_r2_zip.outputs.artifact-id }}
+          path: .artifact-benchmark/downloads/r2-zip
+      - name: Unpack and verify r2-zip
+        env:
+          ARTIFACT_ID: ${{ steps.upload_r2_zip.outputs.artifact-id }}
+        run: python3 .github/benchmarks/artifact-transfer.py verify r2-zip
+      - name: Pack r3-zstd
+        run: python3 .github/benchmarks/artifact-transfer.py prepare r3-zstd zstd
+      - name: Upload r3-zstd
+        id: upload_r3_zstd
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          path: .artifact-benchmark/r3-zstd.tar.zst
+          archive: false
+          retention-days: 1
+          if-no-files-found: error
+      - name: Download r3-zstd
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ steps.upload_r3_zstd.outputs.artifact-id }}
+          path: .artifact-benchmark/downloads/r3-zstd
+          skip-decompress: true
+      - name: Unpack and verify r3-zstd
+        env:
+          ARTIFACT_ID: ${{ steps.upload_r3_zstd.outputs.artifact-id }}
+        run: python3 .github/benchmarks/artifact-transfer.py verify r3-zstd
+      - name: Pack r3-zip
+        run: python3 .github/benchmarks/artifact-transfer.py prepare r3-zip zip
+      - name: Upload r3-zip
+        id: upload_r3_zip
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: r3-zip
+          path: |
+            dist/
+            worker.js
+            wrangler.jsonc
+          compression-level: 6
+          retention-days: 1
+          if-no-files-found: error
+      - name: Download r3-zip
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ steps.upload_r3_zip.outputs.artifact-id }}
+          path: .artifact-benchmark/downloads/r3-zip
+      - name: Unpack and verify r3-zip
+        env:
+          ARTIFACT_ID: ${{ steps.upload_r3_zip.outputs.artifact-id }}
+        run: python3 .github/benchmarks/artifact-transfer.py verify r3-zip
+      - name: Pack r3-gzip
+        run: python3 .github/benchmarks/artifact-transfer.py prepare r3-gzip gzip
+      - name: Upload r3-gzip
+        id: upload_r3_gzip
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          path: .artifact-benchmark/r3-gzip.tar.gz
+          archive: false
+          retention-days: 1
+          if-no-files-found: error
+      - name: Download r3-gzip
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ steps.upload_r3_gzip.outputs.artifact-id }}
+          path: .artifact-benchmark/downloads/r3-gzip
+          skip-decompress: true
+      - name: Unpack and verify r3-gzip
+        env:
+          ARTIFACT_ID: ${{ steps.upload_r3_gzip.outputs.artifact-id }}
+        run: python3 .github/benchmarks/artifact-transfer.py verify r3-gzip
+      - name: Summarize verified transfers
+        run: python3 .github/benchmarks/artifact-transfer.py summary
+      - name: Upload comparison evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: artifact-transfer-results
+          include-hidden-files: true
+          if-no-files-found: error
+          path: |
+            .artifact-benchmark/results.json
+            .artifact-benchmark/inventory.json
+            .artifact-benchmark/manifest.json
+            .artifact-benchmark/r*.json
+          retention-days: 7
